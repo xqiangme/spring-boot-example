@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.db2.UserInfo2Mapper">
+    <resultMap id="BaseResultMap" type="com.example.entity.UserInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="del_flag" property="delFlag" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id,
+      user_id,
+      user_name,
+      user_password,
+      real_name,
+      mobile,
+      remark,
+      create_time,
+      update_time,
+      del_flag
+    </sql>
+
+
+    <insert id="insert" parameterType="com.example.entity.UserInfo">
+      INSERT INTO user_info
+       (
+        id,
+        user_id,
+        user_name,
+        user_password,
+        real_name,
+        mobile,
+        remark,
+        create_time,
+        update_time,
+        del_flag
+       )
+      values
+       (
+          #{id,jdbcType=INTEGER},
+          #{userId,jdbcType=VARCHAR},
+          #{userName,jdbcType=VARCHAR},
+          #{userPassword,jdbcType=VARCHAR},
+          #{realName,jdbcType=VARCHAR},
+          #{mobile,jdbcType=VARCHAR},
+          #{remark,jdbcType=VARCHAR},
+          #{createTime,jdbcType=TIMESTAMP},
+          #{updateTime,jdbcType=TIMESTAMP},
+          #{delFlag,jdbcType=BIT}
+       )
+    </insert>
+
+
+    <!-- 查询所有记录 -->
+    <select id="listAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+    </select>
+
+    <!-- 根据业务主键查询 -->
+    <select id="getByUserId" resultMap="BaseResultMap"
+            parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+        WHERE
+        user_id = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateByUserId" parameterType="com.example.entity.UserInfo">
+    UPDATE user_info
+    SET
+    user_name = #{userName,jdbcType=VARCHAR},
+    user_password = #{userPassword,jdbcType=VARCHAR},
+    real_name = #{realName,jdbcType=VARCHAR},
+    mobile = #{mobile,jdbcType=VARCHAR},
+    remark = #{remark,jdbcType=VARCHAR},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    update_time = #{updateTime,jdbcType=TIMESTAMP}
+    WHERE
+        user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+
+    <!-- 根据业务主键动态修改-->
+    <update id="updateByUserIdSelective"
+            parameterType="com.example.entity.UserInfo">
+        UPDATE user_info
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                user_password = #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=BIT},
+            </if>
+        </set>
+        WHERE
+        user_id = #{userId,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

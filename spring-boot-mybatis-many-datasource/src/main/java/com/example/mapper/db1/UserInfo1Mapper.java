@@ -13,7 +13,6 @@ import java.util.List;
  * @author 码农猿
  * @date 2019-03-25 23:08:13
  */
-//@Mapper
 public interface UserInfo1Mapper {
 
 

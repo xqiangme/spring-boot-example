@@ -1,13 +1,5 @@
-/**
- * fshows.com
- * Copyright (C) 2013-2018 All Rights Reserved.
- */
 package com.example.provide.filter;
 
-/**
- * @author wujn
- * @version StringPool.java, v 0.1 2018-05-06 23:25 wujn
- */
 public class StringPool {
     public static final String AMPERSAND = "&";
     public static final String AND = "and";
@@ -74,7 +66,6 @@ public class StringPool {
     public static final String HTML_QUOTE = "&quot;";
     public static final String HTML_LT = "&lt;";
     public static final String HTML_GT = "&gt;";
-    public static final String FSHOWS = "fshows";
     public static final String BASE64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     public static final String DESC = " DESC";
     public static final String SYSTEM = "SYSTEM";

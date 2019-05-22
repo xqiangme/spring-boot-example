@@ -1,6 +1,7 @@
 package com.example.api.service;
 
 import com.example.api.model.UserInfoVO;
+import com.example.api.result.ApiResult;
 
 import java.util.List;
 
@@ -21,6 +22,12 @@ public interface UserApiService {
      * 获取人员列表
      */
     List<UserInfoVO> listUser();
+
+
+    /**
+     * 测试生产者异常
+     */
+    ApiResult testException(Integer type);
 
 
 }

@@ -1308,6 +1308,19 @@ public class RedisCache {
         return this.isLongEquals(LONG_ONE, result);
     }
 
+    public Boolean hSet(String key, String field, Object value, int duration, TimeUnit timeUnit) {
+        validateKeyParam(key);
+        Long result = redisClient.invoke(jedisPool, (jedis) ->{
+                    Long hashResult = jedis.hset(key.getBytes(), field.getBytes(),
+                            JsonSerializer.serialize(value));
+                    jedis.pexpire(key.getBytes(), TimeUnitUtil.getMillis(timeUnit, duration));
+                    return hashResult;
+                }
+        );
+        return this.isLongEquals(LONG_ONE, result);
+    }
+
+
     /**
      * 用于为哈希表中不存在的的字段赋值
      * 如果哈希表不存在，一个新的哈希表被创建并进行 HSET 操作

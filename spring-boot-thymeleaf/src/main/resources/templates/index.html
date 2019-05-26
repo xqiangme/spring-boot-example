@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<script type="text/javascript" th:src="@{/js/jquery-1.11.0.min.js}"></script>
+<script>
+    $(function () {
+        alert("测试 thymeleaf ")
+    });
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>测试 thymeleaf </title>
+</head>
+<body>
+
+测试 thymeleaf >> <span th:text="${welcome}"></span>
+</body>
+</html>

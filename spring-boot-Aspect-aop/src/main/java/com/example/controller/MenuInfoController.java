@@ -26,8 +26,8 @@ public class MenuInfoController {
      * @author 码农猿
      */
     @PostMapping(value = "/add-menu")
-    public Response addMenu(@Valid @RequestBody MenuAddParam addParam) {
-        return null;
+    public Response addMenu(@RequestBody MenuAddParam addParam) {
+        return Response.success();
     }
 
 

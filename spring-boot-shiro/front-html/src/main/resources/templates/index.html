@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<script src="js/constant.js"></script>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+    //后台接口地址
+    var interfaceAddress = getAddress();
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: interfaceAddress + "/login/getUserInfo",
+            contentType: "application/json; charset=utf-8",
+            xhrFields: {
+                withCredentials: true
+            },
+            data: "{}",
+            dataType: "json",
+            success: function (message) {
+                if (true === message.success) {
+                    $("#username").html(message.data.currentUser.userName);
+                    $("#permissions").html("权限：" + (message.data.permissions).toString());
+                } else {
+                    //未登录 > 跳转回登录页面
+                    if ("4005" === message.errorCode) {
+                        window.location.href = "/login"
+                    }
+                }
+            },
+            error: function (message) {
+                alert("请求服务失败");
+            }
+        });
+
+        $("#ajaxLogOut").click(function () {
+            $.ajax({
+                type: "POST",
+                url: interfaceAddress + "/login/out",
+                contentType: "application/json; charset=utf-8",
+                xhrFields: {
+                    withCredentials: true
+                },
+                data: "{}",
+                dataType: "json",
+                success: function (message) {
+                    //退出成功 > 跳转回登录页
+                    if (true === message.success) {
+                        window.location.href = "/login";
+                    } else {
+                        alert("退出失败 > " + message.errorMsg)
+                    }
+                },
+                error: function (message) {
+                    alert("请求服务失败");
+                }
+            });
+        });
+    });
+</script>
+<body>
+<h2><span id="username"></span> 欢迎您登录成功！</h2>
+<p><span id="permissions"></span></p>
+
+<p><a href="/userList">人员列表</a></p>
+<p><a href="/userAdd">人员新增</a></p>
+<p><a href="/userDel">人员删除</a></p>
+<p><a href="/userDetail">人员详情</a></p>
+
+
+<p><input type="button" value="退出" id="ajaxLogOut"/></p>
+</body>
+</html>

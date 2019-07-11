@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>登录</title>
+    <script src="js/constant.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+</head>
+<script>
+    //后台接口地址
+    $(document).ready(function () {
+
+        $("#ajaxLogin").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8881/user/login",
+                contentType: "application/json;charset=UTF-8",
+                xhrFields: {
+                    withCredentials: true
+                },
+                data: JSON.stringify(GetJsonData()),
+                // dataType: "json",
+                success: function (message) {
+                    alert("登录失败 > " + message.errorMsg)
+                },
+                error: function (message) {
+                    alert("请求服务失败"+message.errorMsg);
+                }
+            });
+        });
+    });
+
+    function GetJsonData() {
+        var json = {
+            "username": $("#username").val(),
+            "password": $("#password").val(),
+            "code": $("#code").val()
+        };
+        return json;
+    }
+</script>
+<body>
+<p>账号：<input type="text" name="username" id="username" value="admin"/></p>
+<p>密码：<input type="text" name="password" id="password" value="123456"/></p>
+<p>验证码值：<input type="text" name="code" id="code" value=""/></p>
+<p>验证码：<img src="http://localhost:8881/user/getVerifyCode"></p>
+<p id="errorMsg"></p>
+<p><input type="button" value="登录" id="ajaxLogin"/></p>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>人员列表</title>
+    <script src="js/constant.js"></script>
+    <script src="js/common.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        //后台接口地址
+        window.onload = function () {
+            userHtmlOnloadJs("/user/list");
+        }
+    </script>
+</head>
+<body>
+人员列表
+<pre id="resJson"></pre>
+</body>
+</html>

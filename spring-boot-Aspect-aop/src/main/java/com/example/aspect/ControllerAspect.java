@@ -1,9 +1,7 @@
 package com.example.aspect;
 
-import com.example.util.SystemClock;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -48,18 +46,17 @@ public class ControllerAspect {
         String methodName = classNameArray[classNameArray.length - 1] + "  >>> " + method.getName();
 
         String params = buildParamsDefault(call);
-        long start = SystemClock.millisClock().now();
+        long start = System.currentTimeMillis();
         //随机请求标识，便于日志追踪
         String reqId = getRandom(10);
         Object result = null;
         try {
-            log.info("日志标识：{} >> [接口请求开始] 方法名：{} , 请求参数：{}", reqId, methodName, params);
+            log.info("[ {} ] >> [接口请求开始] 方法 : {} , 请求参数 : {}", reqId, methodName, params);
             result = call.proceed();
             return result;
-
         } finally {
-            long runTimes = SystemClock.millisClock().now() - start;
-            log.info("日志标识：{} >> [接口请求结束] 方法名：{} , 请求耗时：{} ms", reqId, methodName, runTimes);
+            long runTimes = System.currentTimeMillis() - start;
+            log.info("[ {} ] >> [接口请求结束] 方法 : {} , 耗时 : {} ms, 返回参数 : {}", reqId, methodName, runTimes, result == null ? "" : JSON.toJSONString(result));
         }
     }
 
@@ -74,7 +71,7 @@ public class ControllerAspect {
                 }
                 String str = obj.toString();
                 if (obj.getClass() != String.class) {
-                    str = ToStringBuilder.reflectionToString(obj, ToStringStyle.SHORT_PREFIX_STYLE);
+                    str = JSON.toJSONString(obj);
                 }
                 if (i != call.getArgs().length - 1) {
                     params += str + ",";
@@ -99,7 +96,7 @@ public class ControllerAspect {
                 int choice = random.nextInt(2) % 2 == 0 ? 65 : 97;
                 ret.append((char) (choice + random.nextInt(26)));
             } else {
-                ret.append(Integer.toString(random.nextInt(10)));
+                ret.append((random.nextInt(10)));
             }
         }
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dal.demo.mapper.UserInfoDOMapper">
+    <!-- 自动生成,请修改 USER_INFO.xml -->
+    <resultMap id="BaseResultMap"  type="com.example.dal.demo.dataobject.UserInfoDO">
+        <id column="ID" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" javaType="String"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" javaType="String"/>
+        <result column="AVATAR" property="avatar" jdbcType="VARCHAR" javaType="String"/>
+        <result column="USER_ID" property="userId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="REMARKS" property="remarks" jdbcType="VARCHAR" javaType="String"/>
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR" javaType="String"/>
+        <result column="REAL_NAME" property="realName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="USERNAME" property="username" jdbcType="VARCHAR" javaType="String"/>
+        <result column="STATUS" property="status" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="DEL_FLAG" property="delFlag" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+
+    <sql id="Base_SF_Column_List">
+        sf.ID,sf.EMAIL,sf.PHONE,sf.AVATAR,sf.USER_ID
+        ,sf.REMARKS,sf.PASSWORD,sf.REAL_NAME,sf.USERNAME,sf.STATUS
+        ,sf.CREATE_TIME,sf.UPDATE_TIME
+    </sql>
+    <sql id="Base_Column_List">
+        ID,EMAIL,PHONE,AVATAR,USER_ID
+        ,REMARKS,PASSWORD,REAL_NAME,USERNAME,STATUS
+        ,CREATE_TIME,UPDATE_TIME
+    </sql>
+
+
+    <!---->
+    <select id="listAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+    </select>
+</mapper>

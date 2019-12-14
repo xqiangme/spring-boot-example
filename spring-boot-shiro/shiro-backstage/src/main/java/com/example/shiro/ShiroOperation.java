@@ -24,6 +24,11 @@ public class ShiroOperation {
      * 获取当前登录用户
      */
     public static UserLoginResult getCurrentUser() {
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        if (null == principal) {
+            return null;
+        }
+
         UserLoginResult user = (UserLoginResult) SecurityUtils.getSubject().getPrincipal();
         if (null != user) {
             //安全起见 抹除密码

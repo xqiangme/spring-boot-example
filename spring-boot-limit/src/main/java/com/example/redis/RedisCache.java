@@ -1,13 +1,12 @@
 package com.example.redis;
 
 import com.alibaba.fastjson.JSONArray;
-import com.example.redis.client.RedisClient;
-import com.example.redis.model.RedisRangScoresModel;
 import com.example.util.JsonSerializer;
 import com.example.util.SystemClock;
 import com.example.util.TimeUnitUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.example.redis.client.RedisClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -615,36 +614,6 @@ public class RedisCache {
         });
     }
 
-    /**
-     * 返回有序集中，指定区间内的成员 -> 从大到小
-     * 其中成员的位置按分数值递增(从大到小)来排序
-     *
-     * @param key
-     * @param clazz
-     * @param start 开始位置
-     * @param end   结束位置
-     * @return 指定区间内，带有分数值的有序集成员的列表。
-     */
-    public <T> List<RedisRangScoresModel<T>> zrevrangeWithScores(String key, Class<T> clazz, int start, int end) {
-        validateKeyParam(key);
-        List<RedisRangScoresModel<T>> result = redisClient.invoke(jedisPool, jedis -> {
-            Set<Tuple> set = jedis.zrevrangeWithScores(key.getBytes(), start, end);
-            List<RedisRangScoresModel<T>> list = new ArrayList<>(set.size());
-            if (CollectionUtils.isEmpty(set)) {
-                return new ArrayList<RedisRangScoresModel<T>>();
-            }
-            RedisRangScoresModel<T> rangScores = null;
-            for (Tuple bytes : set) {
-                rangScores = new RedisRangScoresModel<T>();
-                T t = JsonSerializer.deserialize(bytes.getBinaryElement(), clazz);
-                rangScores.setObj(t);
-                rangScores.setScore(bytes.getScore());
-                list.add(rangScores);
-            }
-            return list;
-        });
-        return result;
-    }
 
     /**
      * 返回有序集中，指定区间内的成员 -> 从大到小
@@ -1310,7 +1279,7 @@ public class RedisCache {
 
     public Boolean hSet(String key, String field, Object value, int duration, TimeUnit timeUnit) {
         validateKeyParam(key);
-        Long result = redisClient.invoke(jedisPool, (jedis) ->{
+        Long result = redisClient.invoke(jedisPool, (jedis) -> {
                     Long hashResult = jedis.hset(key.getBytes(), field.getBytes(),
                             JsonSerializer.serialize(value));
                     jedis.pexpire(key.getBytes(), TimeUnitUtil.getMillis(timeUnit, duration));
@@ -1437,7 +1406,6 @@ public class RedisCache {
         });
         return result;
     }
-
 
 
     /**

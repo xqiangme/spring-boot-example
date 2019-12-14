@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dal.demo.mapper.DBPreCheckMapper">
+    <select id="dbColumnCheck" resultType="String">
+        SELECT CONCAT('表结构不一致 tbName:',tb_name,' 期望字段:',exp_columns,' 数据库中字段:',db_columns) as msg
+        FROM (
+        SELECT
+            COUNT(*)= 13 as fg,'user_info' as tb_name,group_concat(COLUMN_NAME) db_columns,
+            'ID,EMAIL,PHONE,AVATAR,USER_ID,REMARKS,PASSWORD,REAL_NAME,USERNAME,STATUS,DEL_FLAG,CREATE_TIME,UPDATE_TIME' exp_columns
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE
+            TABLE_NAME = 'user_info'
+            AND COLUMN_NAME in('ID','EMAIL','PHONE','AVATAR','USER_ID','REMARKS','PASSWORD','REAL_NAME','USERNAME','STATUS','DEL_FLAG','CREATE_TIME','UPDATE_TIME')
+        GROUP BY TABLE_NAME
+        )a
+        WHERE fg=0
+    </select>
+</mapper>

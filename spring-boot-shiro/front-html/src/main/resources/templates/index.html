@@ -22,7 +22,7 @@
             success: function (message) {
                 if (true === message.success) {
                     $("#username").html(message.data.currentUser.userName);
-                    $("#permissions").html("权限：" + (message.data.permissions).toString());
+                    $("#permissions").html("接口权限：" + (message.data.permissions).toString());
                 } else {
                     //未登录 > 跳转回登录页面
                     if ("4005" === message.errorCode) {

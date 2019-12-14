@@ -1,0 +1,26 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="user_info" physicalName="user_info" remark="用户表">
+    <!--  特殊字符说明 &lt;&gt; <> -->
+    <!-- baseSql option中 select * 会自动替换为 include -->
+    <sql id="Base_Column_List">
+        ID,EMAIL,PHONE,AVATAR,USER_ID
+        ,REMARKS,PASSWORD,REAL_NAME,USERNAME,STATUS
+        ,CREATE_TIME,UPDATE_TIME
+    </sql>
+
+    <!-- baseSql option中 select sf.* 会自动替换为 include -->
+    <sql id="Base_SF_Column_List">
+        sf.ID,sf.EMAIL,sf.PHONE,sf.AVATAR,sf.USER_ID
+        ,sf.REMARKS,sf.PASSWORD,sf.REAL_NAME,sf.USERNAME,sf.STATUS
+        ,sf.CREATE_TIME,sf.UPDATE_TIME
+    </sql>
+
+
+    <operation name="listAll" multiplicity="many" remark="">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+    </operation>
+
+
+</table>

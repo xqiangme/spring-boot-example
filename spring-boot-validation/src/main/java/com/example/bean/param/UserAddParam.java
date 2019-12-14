@@ -3,10 +3,12 @@ package com.example.bean.param;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 人员信息新增参数
@@ -54,6 +56,19 @@ public class UserAddParam implements Serializable {
      * remark测试
      */
     private String remark;
+
+
+    /**
+     * 集合
+     */
+    @NotEmpty(message = "集合不为空数组")
+    private List<String> testList1;
+
+    /**
+     * 集合测试
+     */
+    @NotNull(message = "集合不为空")
+    private List<String> testList2;
 
     //省略 get set
 

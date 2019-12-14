@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<script type="text/javascript" th:src="@{/js/jquery-1.11.0.min.js}"></script>
+<script>
+    $(function () {
+        // alert("测试 thymeleaf ")
+    });
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>测试 上传 </title>
+</head>
+<body>
+
+<form method="post" action="/blacklist/importList" enct、、>
+    <input type="text" name="feeCode" value="118"><br>
+    <input type="text" name="ownRun" value="1"><br>
+    <input type="file" name="file"><br>
+    <input type="submit" value="提交">
+</form>
+
+</body>
+</html>

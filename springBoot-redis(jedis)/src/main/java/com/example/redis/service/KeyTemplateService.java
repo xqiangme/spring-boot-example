@@ -1,7 +1,3 @@
-/**
- * fshows.com
- * Copyright (C) 2013-2020 All Rights Reserved.
- */
 package com.example.redis.service;
 
 import java.util.concurrent.TimeUnit;

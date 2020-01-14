@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * redis => 数据结构 list 查询 相关命令 测试
  *
- * @author 码农猿
+ * @author mengqiang
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -45,17 +45,17 @@ public class ListQueryApiTest {
         this.buildBaseInfo(key, value);
 
         //修改元素  2-11个元素
-        List<String> stringList = redisCache.lRange(key, 1, 10);
+        List<String> stringList = redisCache.listTemplate().lRange(key, 1, 10);
         if (!CollectionUtils.isEmpty(stringList)) {
             for (String str : stringList) {
                 LOGGER.info("lrange =>   str={}", str);
             }
         }
         //当前集合大小
-        long len = redisCache.lLen(key);
+        long len = redisCache.listTemplate().lLen(key);
         LOGGER.info("len test end len={}", len);
         if (len > 0) {
-            String svalue = redisCache.lindex(key, 0, String.class);
+            String svalue = redisCache.listTemplate().lIndex(key, 0, String.class);
             LOGGER.info("lindex test end svalue={}", svalue);
         }
         LOGGER.info("list test end");
@@ -67,11 +67,11 @@ public class ListQueryApiTest {
      */
     private void buildBaseInfo(String key, String defaultValue) {
         //先删除原先
-        redisCache.del(key);
+        redisCache.keyTemplate().del(key);
         //初始化20条测试数据
         for (int i = 1; i <= 20; i++) {
             String value = defaultValue.concat(String.valueOf(i));
-            redisCache.rpush(key, value);
+            redisCache.listTemplate().rpush(key, value);
         }
     }
 }

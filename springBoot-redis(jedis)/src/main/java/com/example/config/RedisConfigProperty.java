@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 /**
  * redis 配置属性类
  *
- * @author 码农猿
+ * @author mengqiang
  * @version RedisConfigProperty.java, v 1.0
  */
 @Component

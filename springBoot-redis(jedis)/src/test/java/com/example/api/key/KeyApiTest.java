@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * redis => key 相关命令 测试
  *
- * @author 码农猿
+ * @author mengqiang
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -34,9 +34,10 @@ public class KeyApiTest {
         String key = "exists_api_test_key";
         String value = "exists_api_test_value";
         //初始化测试数据
-        redisCache.set(key, value);
+        redisCache.stringTemplate().set(key, value);
+
         //检查key是否存在
-        Boolean existFlag = redisCache.exists(key);
+        Boolean existFlag = redisCache.keyTemplate().exists(key);
 
         LOGGER.info("检查key是否存在 existFlag={}", existFlag);
     }
@@ -49,10 +50,10 @@ public class KeyApiTest {
         String key = "expire_api_test_key";
         String value = "expire_api_test_value";
         //初始化测试数据
-        redisCache.set(key, value);
+        redisCache.stringTemplate().set(key, value);
         int seconds = 120;
         //设置key 过期时间
-        Boolean expireFlag = redisCache.expire(key, seconds);
+        Boolean expireFlag = redisCache.keyTemplate().expire(key, seconds);
 
         LOGGER.info(" 为key设置过期时间，以秒计算 expireFlag={}", expireFlag);
     }
@@ -65,9 +66,9 @@ public class KeyApiTest {
         String key = "del_api_test_key";
         String value = "del_api_test_value";
         //初始化测试数据
-        redisCache.set(key, value);
+        redisCache.stringTemplate().set(key, value);
         //删除key
-        Long del = redisCache.del(key);
+        Long del = redisCache.keyTemplate().del(key);
         LOGGER.info("删除key数量 del={}", del);
     }
 
@@ -79,8 +80,8 @@ public class KeyApiTest {
         String key = "type_api_test_key";
         String value = "type_api_test_value";
         //初始化测试数据
-        redisCache.set(key, value);
-        String type = redisCache.getType(key);
+        redisCache.stringTemplate().set(key, value);
+        String type = redisCache.keyTemplate().getType(key);
         LOGGER.info("获取key所存储的数据类型 type={}", type);
     }
 }

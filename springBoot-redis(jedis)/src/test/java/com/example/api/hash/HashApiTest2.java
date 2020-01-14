@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * redis => 数据结构 hash 获取 相关命令 测试
  *
- * @author 码农猿
+ * @author mengqiang
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -42,7 +42,7 @@ public class HashApiTest2 {
 
         int duration = 60;
         //初始化测试数据
-        Boolean hasSetFlag = redisCache.hSet(key, field, value, duration, TimeUnit.SECONDS);
+        Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value, duration, TimeUnit.SECONDS);
         LOGGER.info("hset  end  =>  hasSetFlag={}", hasSetFlag);
     }
 

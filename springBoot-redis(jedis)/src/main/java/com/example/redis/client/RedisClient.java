@@ -17,15 +17,14 @@ public class RedisClient {
     public <T> T invoke(JedisPool pool, RedisClientInvoker<T> clients) {
         T obj = null;
         Jedis jedis = null;
-        boolean broken = false;
         try {
             jedis = pool.getResource();
             obj = clients.invoke(jedis);
         } catch (JedisException | IOException ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            LOGGER.error("[Redis-invoke] Exception {} - {}", ex.getMessage(), ex);
         } finally {
             if (jedis != null) {
-                if (jedis.isConnected()){
+                if (jedis.isConnected()) {
                     jedis.close();
                 }
             }

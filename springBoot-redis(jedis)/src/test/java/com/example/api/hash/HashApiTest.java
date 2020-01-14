@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * redis => 数据结构 hash 获取 相关命令 测试
  *
- * @author 码农猿
+ * @author mengqiang
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -30,7 +30,7 @@ public class HashApiTest {
 
     @Autowired
     private RedisCache redisCache;
-
+    
     /**
      * 获取hash中属性值
      * hash结构 => hget 命令测试
@@ -41,7 +41,7 @@ public class HashApiTest {
         String value = "hset_api_test_value1";
         String field = "hset_api_test_field2";
         //初始化测试数据
-        Boolean hasSetFlag = redisCache.hSet(key, field, value);
+        Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
         LOGGER.info("hset  end  =>  hasSetFlag={}", hasSetFlag);
     }
 
@@ -55,9 +55,9 @@ public class HashApiTest {
         String value = "hget_api_test_value";
         String field = "hget_api_test_field";
         //初始化测试数据
-        Boolean hasSetFlag = redisCache.hSet(key, field, value);
+        Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
         LOGGER.info("hset  end  =>  hasSetFlag={}", hasSetFlag);
-        String hashValue = redisCache.hGet(key, field, String.class);
+        String hashValue = redisCache.hashTemplate().hGet(key, field, String.class);
         LOGGER.info("hget test end  =>  hashValue={}", hashValue);
     }
 
@@ -71,10 +71,10 @@ public class HashApiTest {
         String value = "hdel_api_test_value";
         String field = "hdel_api_test_field";
         //初始化测试数据
-        Boolean hasSetFlag = redisCache.hSet(key, field, value);
+        Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
         LOGGER.info("hset  end  =>  hasSetFlag={}", hasSetFlag);
         //返回删除的数量
-        Long delNum = redisCache.hdel(key, field);
+        Long delNum = redisCache.hashTemplate().hdel(key, field);
         LOGGER.info("hdel test end  =>  hashValue={}", delNum);
     }
 
@@ -88,10 +88,10 @@ public class HashApiTest {
         String value = "hexists_api_test_value";
         String field = "hexists_api_test_field";
         //初始化测试数据
-        Boolean hasSetFlag = redisCache.hSet(key, field, value);
+        Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
         LOGGER.info("hset  end  =>  hasSetFlag={}", hasSetFlag);
         //返回是否存在
-        Boolean hExistsFlag = redisCache.hexists(key, field);
+        Boolean hExistsFlag = redisCache.hashTemplate().hexists(key, field);
         LOGGER.info("hexists test end  =>  hExistsFlag={}", hExistsFlag);
     }
 
@@ -107,11 +107,11 @@ public class HashApiTest {
             String field = "hlen_api_test_field_".concat(str);
             String value = "hlen_api_test_value_".concat(str);
             //初始化10条测试数据
-            Boolean hasSetFlag = redisCache.hSet(key, field, value);
+            Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
             LOGGER.info("hlen  end  => i={} hasSetFlag={}", i, hasSetFlag);
         }
         //获取hash 长度
-        Long hashLen = redisCache.hlen(key);
+        Long hashLen = redisCache.hashTemplate().hlen(key);
         LOGGER.info("hlen test end  =>  hashLen={}", hashLen);
     }
 
@@ -126,10 +126,10 @@ public class HashApiTest {
         long value = 1;
         //测试10次计数
         for (int i = 1; i <= 10; i++) {
-            Long incrValue = redisCache.hashIncrBy(key, field, value);
+            Long incrValue = redisCache.hashTemplate().hashIncrBy(key, field, value);
             LOGGER.info("hashIncr  end  => i={} incrValue={}", i, incrValue);
         }
-        Integer incrNum = redisCache.hGet(key, field, Integer.class);
+        Integer incrNum = redisCache.hashTemplate().hGet(key, field, Integer.class);
         LOGGER.info("hincrby test end  =>  incrNum={}", incrNum);
     }
 
@@ -144,10 +144,10 @@ public class HashApiTest {
         double value = 0.01;
         //测试10次计数
         for (int i = 1; i <= 10; i++) {
-            Double incrValue = redisCache.hashIncrByFloat(key, field, value);
+            Double incrValue = redisCache.hashTemplate().hashIncrByFloat(key, field, value);
             LOGGER.info("hincrbyfloat  end  => i={} incrValue={}", i, incrValue);
         }
-        Double incrNum = redisCache.hGet(key, field, Double.class);
+        Double incrNum = redisCache.hashTemplate().hGet(key, field, Double.class);
         LOGGER.info("hincrbyfloat test end  =>  incrNum={}", incrNum);
     }
 
@@ -163,11 +163,11 @@ public class HashApiTest {
             String field = "hgetall_api_test_field_".concat(str);
             String value = "hgetall_api_test_value_".concat(str);
             //初始化10条测试数据
-            Boolean hasSetFlag = redisCache.hSet(key, field, value);
+            Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
             LOGGER.info("hset  end  => i={} hasSetFlag={}", i, hasSetFlag);
         }
 
-        Map<String, String> hashAllMap = redisCache.hgetAll(key, String.class);
+        Map<String, String> hashAllMap = redisCache.hashTemplate().hgetAll(key, String.class);
         LOGGER.info("hgetAll test   =>  size={}", hashAllMap.size());
         if (!CollectionUtils.isEmpty(hashAllMap)) {
             for (Map.Entry<String, String> map : hashAllMap.entrySet()) {
@@ -189,11 +189,11 @@ public class HashApiTest {
             String field = "hvals_api_test_field_".concat(str);
             String value = "hvals_api_test_value_".concat(str);
             //初始化10条测试数据
-            Boolean hasSetFlag = redisCache.hSet(key, field, value);
+            Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
             LOGGER.info("hset  end  => i={} hasSetFlag={}", i, hasSetFlag);
         }
 
-        List<String> stringList = redisCache.hvals(key, String.class);
+        List<String> stringList = redisCache.hashTemplate().hvals(key, String.class);
         LOGGER.info("hvals test   =>  size={}", stringList.size());
         if (!CollectionUtils.isEmpty(stringList)) {
             for (String str : stringList) {
@@ -215,11 +215,11 @@ public class HashApiTest {
             String field = "hkeys_api_test_field_".concat(str);
             String value = "hkeys_api_test_value_".concat(str);
             //初始化10条测试数据
-            Boolean hasSetFlag = redisCache.hSet(key, field, value);
+            Boolean hasSetFlag = redisCache.hashTemplate().hSet(key, field, value);
             LOGGER.info("hset  end  => i={} hasSetFlag={}", i, hasSetFlag);
         }
 
-        Set<String> stringSet = redisCache.hkeys(key);
+        Set<String> stringSet = redisCache.hashTemplate().hkeys(key);
         LOGGER.info("hkeys test   =>  size={}", stringSet.size());
         if (!CollectionUtils.isEmpty(stringSet)) {
             for (String str : stringSet) {
@@ -231,7 +231,7 @@ public class HashApiTest {
 
     /**
      * 若不存在则设置hash key 对应field的value
-     *
+     * <p>
      * hash结构 => hsetNx 命令测试
      */
     @Test
@@ -240,7 +240,7 @@ public class HashApiTest {
         String value = "hsetNx_api_test_value1";
         String field = "hsetNx_api_test_field2";
         //初始化测试数据
-        Boolean hasSetNxFlag = redisCache.hSetNx(key, field, value);
+        Boolean hasSetNxFlag = redisCache.hashTemplate().hSetNx(key, field, value);
         LOGGER.info("hsetNx  end  =>  hasSetFlag={}", hasSetNxFlag);
     }
 }

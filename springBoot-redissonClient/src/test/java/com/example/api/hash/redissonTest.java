@@ -23,7 +23,6 @@ public class redissonTest {
     @Autowired
     private RedisCache redisCache;
 
-
     @Test
     public void test() throws Exception {
         String redisKey = "zAdd_api_test_key1";
@@ -46,4 +45,5 @@ public class redissonTest {
         }
         Thread.sleep(3000);
     }
+
 }

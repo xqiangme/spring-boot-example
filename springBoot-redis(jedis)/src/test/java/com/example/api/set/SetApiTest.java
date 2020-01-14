@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * redis => 数据结构 set  相关命令 测试
  *
- * @author 码农猿
+ * @author mengqiang
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -41,7 +41,7 @@ public class SetApiTest {
         String key = "sadd_api_test_key";
         String value = "sadd_api_test_value";
         //添加到集合
-        Long saddSize = redisCache.sadd(key, value);
+        Long saddSize = redisCache.setTemplate().sAdd(key, value);
         LOGGER.info("sadd  end  =>  saddSize={}", saddSize);
     }
 
@@ -54,10 +54,10 @@ public class SetApiTest {
         String key = "srem_api_test_key";
         String value = "srem_api_test_value";
         //初始化数据
-        Long saddSize = redisCache.sadd(key, value);
+        Long saddSize = redisCache.setTemplate().sAdd(key, value);
         LOGGER.info("sadd  end  =>  saddSize={}", saddSize);
         //添加到集合
-        Long sremSize = redisCache.srem(key, value);
+        Long sremSize = redisCache.setTemplate().sRem(key, value);
         LOGGER.info("srem  end  =>  sremSize={}", sremSize);
     }
 
@@ -71,11 +71,11 @@ public class SetApiTest {
         String value1 = "scard_api_test_value_1";
         String value2 = "scard_api_test_value_2";
         //初始化数据
-        Long saddSize1 = redisCache.sadd(key, value1);
-        Long saddSize2 = redisCache.sadd(key, value2);
+        Long saddSize1 = redisCache.setTemplate().sAdd(key, value1);
+        Long saddSize2 = redisCache.setTemplate().sAdd(key, value2);
         LOGGER.info("sadd  end  =>  saddSize1={},saddSize2={}", saddSize1, saddSize2);
         //获取集合大小
-        Long scardSize = redisCache.scard(key);
+        Long scardSize = redisCache.setTemplate().sCard(key);
         LOGGER.info("scard  end  =>  scardSize={}", scardSize);
     }
 
@@ -90,11 +90,11 @@ public class SetApiTest {
         String value1 = "sismember_api_test_value_1";
         String value2 = "sismember_api_test_value_2";
         //初始化数据
-        Long saddSize1 = redisCache.sadd(key, value1);
+        Long saddSize1 = redisCache.setTemplate().sAdd(key, value1);
         LOGGER.info("sadd  end  =>  saddSize1={}", saddSize1);
         //获取集合大小
-        Boolean value1Exists = redisCache.sismember(key, value1);
-        Boolean value2Exists = redisCache.sismember(key, value2);
+        Boolean value1Exists = redisCache.setTemplate().sisMember(key, value1);
+        Boolean value2Exists = redisCache.setTemplate().sisMember(key, value2);
         LOGGER.info("sismember  end  =>  value1Exists={},value2Exists={}", value1Exists, value2Exists);
     }
 
@@ -111,7 +111,7 @@ public class SetApiTest {
         this.buildBaseInfo(key, value);
 
         //获取集合中随机个数值
-        Set<String> stringSet = redisCache.srandmember(key, String.class, 5);
+        Set<String> stringSet = redisCache.setTemplate().sRandMember(key, String.class, 5);
         if (CollectionUtils.isEmpty(stringSet)) {
             return;
         }
@@ -136,7 +136,7 @@ public class SetApiTest {
         this.buildBaseInfo(key, value);
 
         //获取集合所有元素
-        Set<String> stringSet = redisCache.smembers(key, String.class);
+        Set<String> stringSet = redisCache.setTemplate().sMembers(key, String.class);
         if (CollectionUtils.isEmpty(stringSet)) {
             return;
         }
@@ -159,7 +159,7 @@ public class SetApiTest {
         this.buildBaseInfo(key, value);
 
         //移除并返回集合中的一个随机元素
-        String strValue = redisCache.spop(key, String.class);
+        String strValue = redisCache.setTemplate().sPop(key, String.class);
 
         LOGGER.info("spop test  end  strValue={}", strValue);
     }
@@ -185,7 +185,7 @@ public class SetApiTest {
         keys.add(key2);
         keys.add(key3);
         //返回给定集合的交集
-        Set<String> setValue = redisCache.sinter(keys, String.class);
+        Set<String> setValue = redisCache.setTemplate().sinter(keys, String.class);
         LOGGER.info("sinter test   => setValueSize={}", setValue.size());
         if (CollectionUtils.isEmpty(setValue)) {
             return;
@@ -217,7 +217,7 @@ public class SetApiTest {
         keys.add(key2);
         keys.add(key3);
         //返回给定集合的并集
-        Set<String> setValue = redisCache.sunion(keys, String.class);
+        Set<String> setValue = redisCache.setTemplate().sunion(keys, String.class);
         LOGGER.info("sunion test   => setValueSize={}", setValue.size());
         if (CollectionUtils.isEmpty(setValue)) {
             return;
@@ -247,7 +247,7 @@ public class SetApiTest {
         keys.add(key1);
 
         //返回给定集合的差集
-        Set<String> setValue = redisCache.sdiff(keys, String.class);
+        Set<String> setValue = redisCache.setTemplate().sDiff(keys, String.class);
         LOGGER.info("sdiff test   => setValueSize={}", setValue.size());
         if (CollectionUtils.isEmpty(setValue)) {
             return;
@@ -270,11 +270,11 @@ public class SetApiTest {
      */
     private void buildBaseInfo(String key, String defaultValue, int start, int end) {
         //先删除原先
-        redisCache.del(key);
+        redisCache.keyTemplate().del(key);
         //初始化20条测试数据
         for (int i = start; i <= end; i++) {
             String value = defaultValue.concat(String.valueOf(i));
-            Long saddSize = redisCache.sadd(key, value);
+            Long saddSize = redisCache.setTemplate().sAdd(key, value);
             LOGGER.info("sadd  end  =>  i={}, saddSize={}", i, saddSize);
         }
     }

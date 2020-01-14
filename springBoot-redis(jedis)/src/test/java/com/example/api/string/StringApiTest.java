@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * redis => 数据结构 String 相关命令 测试
  *
- * @author 码农猿
+ * @author mengqiang
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -30,6 +30,7 @@ public class StringApiTest {
     @Autowired
     private RedisCache redisCache;
 
+
     /**
      * 设置值
      */
@@ -37,8 +38,9 @@ public class StringApiTest {
     public void setApiTest() {
         String key = "set_api_test_key";
         String value = "set_api_test_value";
+        System.out.println(redisCache == null);
         //初始化测试数据
-        redisCache.set(key, value);
+        redisCache.stringTemplate().set(key, value);
         LOGGER.info("set test end");
     }
 
@@ -52,9 +54,9 @@ public class StringApiTest {
         String key = "get_api_test_key";
         String value = "get_api_test_value";
         //初始化测试数据
-        redisCache.set(key, value);
+        redisCache.stringTemplate().set(key, value);
         //获取key 的值
-        String stringValue = redisCache.get(key);
+        String stringValue = redisCache.stringTemplate().get(key);
         LOGGER.info("get test =>  value={}", stringValue);
     }
 
@@ -66,7 +68,7 @@ public class StringApiTest {
     public void incrApiTest() {
         String key = "incr_api_test_key";
         //计数器
-        Long incrValue = redisCache.incr(key);
+        Long incrValue = redisCache.stringTemplate().incr(key);
         LOGGER.info("incr test end  =>  incrValue={}", incrValue);
     }
 
@@ -77,7 +79,7 @@ public class StringApiTest {
     public void decrApiTest() {
         String key = "decr_api_test_key";
         //自减计数器
-        Long decrValue = redisCache.decr(key);
+        Long decrValue = redisCache.stringTemplate().decr(key);
         LOGGER.info("decr test end  =>  decrValue={}", decrValue);
     }
 
@@ -90,7 +92,7 @@ public class StringApiTest {
         //自定义增量
         long num = 10;
         //计数器
-        Long incrValue = redisCache.incrBy(key, num);
+        Long incrValue = redisCache.stringTemplate().incrBy(key, num);
         LOGGER.info("incrBy test end  =>  incrByValue={}", incrValue);
     }
 
@@ -103,7 +105,7 @@ public class StringApiTest {
         //自定义减量
         long num = 10;
         //计数器
-        Long decrValue = redisCache.decrBy(key, num);
+        Long decrValue = redisCache.stringTemplate().decrBy(key, num);
         LOGGER.info("decrBy test end  =>  decrValue={}", decrValue);
     }
 
@@ -115,7 +117,7 @@ public class StringApiTest {
         String key = "setNx_api_test_key";
         long value = 1;
         //key不存在,才设置
-        Boolean setNxflag = redisCache.setNx(key, value);
+        Boolean setNxflag = redisCache.stringTemplate().setNx(key, value);
         LOGGER.info("setNx test end  =>  setNxflag={}", setNxflag);
     }
 
@@ -128,7 +130,7 @@ public class StringApiTest {
         //自定义增量
         String newValue = "new Value 01";
         //设置key-value,并返回旧值
-        String oldValue = redisCache.getSet(key, newValue);
+        String oldValue = redisCache.stringTemplate().getSet(key, newValue);
         LOGGER.info("getSet test end  =>  oldValue={}", oldValue);
     }
 
@@ -145,10 +147,10 @@ public class StringApiTest {
             String key = defaultKey.concat(stri);
             String vale = "value_".concat(stri);
             stringList.add(key);
-            redisCache.set(key, vale);
+            redisCache.stringTemplate().set(key, vale);
         }
 
-        List<String> mgetList = redisCache.mget(stringList, String.class);
+        List<String> mgetList = redisCache.stringTemplate().mget(stringList, String.class);
         LOGGER.info("mget test end  =>  mgetListSize={}", mgetList.size());
         if (CollectionUtils.isEmpty(mgetList)) {
             return;

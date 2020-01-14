@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 /**
  * jedis 配置类
  *
- * @author 码农猿
+ * @author mengqiang
  * @version JedisConfig.java, v 1.0
  */
 @Configuration

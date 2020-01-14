@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * redis => 数据结构 sorted set  相关命令 测试
  *
- * @author 码农猿
+ * @author mengqiang
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -41,8 +41,8 @@ public class ZSetApiTest {
         double score1 = 1.0;
         double score2 = 0.9;
         //添加有序集合成员
-        Long addSize1 = redisCache.zAdd(key, value1, score1);
-        Long addSize2 = redisCache.zAdd(key, value2, score2);
+        Long addSize1 = redisCache.zSetTemplate().zAdd(key, value1, score1);
+        Long addSize2 = redisCache.zSetTemplate().zAdd(key, value2, score2);
         LOGGER.info("zAdd end  =>  addSize1={},addSize2={}", addSize1, addSize2);
     }
 
@@ -57,7 +57,7 @@ public class ZSetApiTest {
         String value1 = "zIncrby_api_test_value1";
         double score1 = 1.0;
         //计数器分值
-        double incrbyScore = redisCache.zIncrby(key, value1, score1);
+        double incrbyScore = redisCache.zSetTemplate().zIncrBy(key, value1, score1);
         LOGGER.info("zIncrby end  =>  incrbyScore={}", incrbyScore);
     }
 
@@ -74,10 +74,10 @@ public class ZSetApiTest {
         double score1 = 1.0;
         double score2 = 0.9;
         //添加有序集合成员
-        Long addSize1 = redisCache.zAdd(key, value1, score1);
-        Long addSize2 = redisCache.zAdd(key, value2, score2);
+        Long addSize1 = redisCache.zSetTemplate().zAdd(key, value1, score1);
+        Long addSize2 = redisCache.zSetTemplate().zAdd(key, value2, score2);
         LOGGER.info("zAdd end  =>  addSize1={},addSize2={}", addSize1, addSize2);
-        Long zremSize = redisCache.zRem(key, value2);
+        Long zremSize = redisCache.zSetTemplate().zRem(key, value2);
         LOGGER.info("zRem end  =>  zremSize={}", zremSize);
     }
 
@@ -92,7 +92,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, value);
         //移除指定排名内的成员(从小到大) 移除排名  2-6元素
-        Long size = redisCache.zRemRangeByRank(key, 1, 5);
+        Long size = redisCache.zSetTemplate().zRemRangeByRank(key, 1, 5);
         LOGGER.info("zRemRangeByRank end  =>  size={}", size);
     }
 
@@ -107,7 +107,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, value);
         //移除指定分数区间内的成员(从小到大) 分值排名  3-6元素
-        Long size = redisCache.zRemRangeByScore(key, 2, 5);
+        Long size = redisCache.zSetTemplate().zRemRangeByScore(key, 2, 5);
         LOGGER.info("zRemRangeByScore end  =>  size={}", size);
     }
 
@@ -124,7 +124,7 @@ public class ZSetApiTest {
         this.buildBaseInfo(key, value);
 
         //获取有序集合大小
-        Long size = redisCache.zCard(key);
+        Long size = redisCache.zSetTemplate().zCard(key);
         LOGGER.info("zCard end  =>  size={}", size);
     }
 
@@ -140,9 +140,9 @@ public class ZSetApiTest {
         String value = "zscore_api_test_value";
         double score = 0.9;
         //添加有序集合成员
-        Long addSize = redisCache.zAdd(key, value, score);
+        Long addSize = redisCache.zSetTemplate().zAdd(key, value, score);
         LOGGER.info("zAdd end  =>  addSize={}", addSize);
-        Double doubleValue = redisCache.zScore(key, value);
+        Double doubleValue = redisCache.zSetTemplate().zScore(key, value);
         LOGGER.info("zScore end  =>  doubleValue={}", doubleValue);
     }
 
@@ -159,7 +159,7 @@ public class ZSetApiTest {
         this.buildBaseInfo(key, value);
 
         // 获取指定分数范围内的成员数量
-        Long size = redisCache.zCount(key, 2, 10);
+        Long size = redisCache.zSetTemplate().zCount(key, 2, 10);
         LOGGER.info("zCount end  =>  size={}", size);
     }
 
@@ -176,7 +176,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, defaultValue);
         //获取成员索引排名(按分值从小到大,从0开始)
-        Long zRankscore = redisCache.zRank(key, value);
+        Long zRankscore = redisCache.zSetTemplate().zRank(key, value);
         LOGGER.info("zrank end  =>  zRankscore={}", zRankscore);
     }
 
@@ -193,7 +193,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, defaultValue);
         //获取成员索引排名(按分值从大到小)
-        Long score = redisCache.zRevRank(key, value);
+        Long score = redisCache.zSetTemplate().zRevRank(key, value);
         LOGGER.info("zrevrank end  =>  score={}", score);
     }
 
@@ -209,7 +209,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, defaultValue);
         //获取指定索引范围内有序集合升序成员(分值从小到大)
-        List<String> stringList = redisCache.zRange(key, String.class, 1, 10);
+        List<String> stringList = redisCache.zSetTemplate().zRange(key, String.class, 1, 10);
         LOGGER.info("zRange end  =>  size={}", stringList.size());
         if (CollectionUtils.isEmpty(stringList)) {
             return;
@@ -232,7 +232,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, defaultValue);
         //获取指定索引范围内有序集合升序成员(分值从大到小)
-        List<String> stringList = redisCache.zRevRange(key, String.class, 1, 10);
+        List<String> stringList = redisCache.zSetTemplate().zRevRange(key, String.class, 1, 10);
         LOGGER.info("zrevrange end  =>  size={}", stringList.size());
         if (CollectionUtils.isEmpty(stringList)) {
             return;
@@ -256,7 +256,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, defaultValue);
         //获取指定分值范围内有序集合升序成员(分值从小到大)
-        List<String> stringList = redisCache.zRangeByScore(key, String.class, 1, 10);
+        List<String> stringList = redisCache.zSetTemplate().zRangeByScore(key, String.class, 1, 10);
         LOGGER.info("zrangebyscore end  =>  size={}", stringList.size());
         if (CollectionUtils.isEmpty(stringList)) {
             return;
@@ -279,7 +279,7 @@ public class ZSetApiTest {
         //初始化测试数据
         this.buildBaseInfo(key, defaultValue);
         //获取指定分值范围内有序集合升序成员(分值从大到小)
-        List<String> stringList = redisCache.zRevRangeByScore(key, String.class, 1, 10);
+        List<String> stringList = redisCache.zSetTemplate().zRevRangeByScore(key, String.class, 1, 10);
         LOGGER.info("zrevrangebyscore end  =>  size={}", stringList.size());
         if (CollectionUtils.isEmpty(stringList)) {
             return;
@@ -302,11 +302,11 @@ public class ZSetApiTest {
      */
     private void buildBaseInfo(String key, String defaultValue, int start, int end) {
         //先删除原先
-        redisCache.del(key);
+        redisCache.keyTemplate().del(key);
         //初始化20条测试数据
         for (int i = start; i <= end; i++) {
             String value = defaultValue.concat(String.valueOf(i));
-            Long saddSize = redisCache.zAdd(key, value, i);
+            Long saddSize = redisCache.zSetTemplate().zAdd(key, value, i);
             LOGGER.info("zAdd  end  =>  i={}, zaddSize={}", i, saddSize);
         }
     }

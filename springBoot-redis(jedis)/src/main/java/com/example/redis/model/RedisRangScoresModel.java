@@ -1,8 +1,7 @@
-package
-        com.example.redis.model;
+package com.example.redis.model;
 
 /**
- * @author 码农猿
+ * @author mengqiang
  */
 public class RedisRangScoresModel<T> {
     private Double score;

@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
  * @author mengqiang
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
-public class Application {
+public class HelloApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(HelloApplication.class, args);
     }
 
 }

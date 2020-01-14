@@ -6,13 +6,13 @@ package com.example.exception;
  *
  * @author mengqiang
  */
-public class ElasticsearchRunException extends BaseException {
+public class ElasticSearchRunException extends BaseException {
 
-    public ElasticsearchRunException(String message) {
+    public ElasticSearchRunException(String message) {
         super(message);
     }
 
-    public ElasticsearchRunException(String mess, Object... args) {
+    public ElasticSearchRunException(String mess, Object... args) {
         super(mess, args);
     }
 

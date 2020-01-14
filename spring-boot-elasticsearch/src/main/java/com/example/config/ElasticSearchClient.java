@@ -2,7 +2,7 @@ package com.example.config;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.example.exception.ElasticsearchRunException;
+import com.example.exception.ElasticSearchRunException;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -129,7 +129,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 保存数据异常,index = {},type = {},dataValue={} ,stack={}",
                     index, type, dataValue, e);
-            throw new ElasticsearchRunException("保存数据到 ElasticSearch 异常");
+            throw new ElasticSearchRunException("保存数据到 ElasticSearch 异常");
         }
     }
 
@@ -150,7 +150,7 @@ public class ElasticSearchClient {
             LOGGER.error("[ ElasticSearch-Client ] >> 保存数据异常,index = {},type = {},id = {},dataValue={} ,stack={}",
                     index, type, id, dataValue, e);
 
-            throw new ElasticsearchRunException("保存数据到 ElasticSearch 异常");
+            throw new ElasticSearchRunException("保存数据到 ElasticSearch 异常");
         }
     }
 
@@ -170,7 +170,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 修改数据异常,index = {},type = {},id = {},dataValue={} ,stack={}",
                     index, type, id, dataValue, e);
-            throw new ElasticsearchRunException("修改 ElasticSearch 数据异常");
+            throw new ElasticSearchRunException("修改 ElasticSearch 数据异常");
         }
     }
 
@@ -194,7 +194,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 动态修改数据异常,index = {},type = {},id = {},dataValue={} ,stack={}",
                     index, type, id, dataValue, e);
-            throw new ElasticsearchRunException("修改 ElasticSearch 数据异常");
+            throw new ElasticSearchRunException("修改 ElasticSearch 数据异常");
         }
     }
 
@@ -226,7 +226,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 根据id查询异常,index = {},type = {},id = {},stack={}",
                     index, type, id, e);
-            throw new ElasticsearchRunException("ElasticSearch 查询异常");
+            throw new ElasticSearchRunException("ElasticSearch 查询异常");
         }
     }
 
@@ -280,7 +280,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 根据id查询异常,index = {},type = {},idList = {},stack={}",
                     index, type, idList, e);
-            throw new ElasticsearchRunException("ElasticSearch 根据ID批量查询异常");
+            throw new ElasticSearchRunException("ElasticSearch 根据ID批量查询异常");
         }
     }
 
@@ -312,7 +312,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 根据ID删除异常,index = {},type = {},id = {},stack={}",
                     index, type, id, e);
-            throw new ElasticsearchRunException("删除 ElasticSearch 数据异常");
+            throw new ElasticSearchRunException("删除 ElasticSearch 数据异常");
         }
     }
 
@@ -366,7 +366,7 @@ public class ElasticSearchClient {
             return bulkResponse;
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 批量保存异常,index = {},type = {},stack={}", index, type, e);
-            throw new ElasticsearchRunException("ElasticSearch 批量保存异常");
+            throw new ElasticSearchRunException("ElasticSearch 批量保存异常");
         }
     }
 
@@ -426,7 +426,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 根据多条件分页查询异常 index = {},boolQueryBuilder = {}",
                     index, boolQueryBuilder.toString(), e);
-            throw new ElasticsearchRunException("ElasticSearch 分页搜索异常");
+            throw new ElasticSearchRunException("ElasticSearch 分页搜索异常");
         }
     }
 
@@ -447,7 +447,7 @@ public class ElasticSearchClient {
         } catch (IOException e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 根据多条件分页查询异常 index = {},searchSourceBuilder = {}",
                     index, searchSourceBuilder.toString(), e);
-            throw new ElasticsearchRunException("ElasticSearch 分页搜索异常");
+            throw new ElasticSearchRunException("ElasticSearch 分页搜索异常");
         }
     }
 
@@ -485,7 +485,7 @@ public class ElasticSearchClient {
         } catch (Exception e) {
             LOGGER.error("[ ElasticSearch-Client ] >> 查询所有数据查询异常 index = {},type = {}",
                     index, type, e);
-            throw new ElasticsearchRunException("ElasticSearch 查询index下所有数据异常");
+            throw new ElasticSearchRunException("ElasticSearch 查询index下所有数据异常");
         }
     }
 

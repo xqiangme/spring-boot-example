@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务管理平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/login.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+    <script th:src="@{../static/layui/js/xadmin.js}" charset="utf-8"></script>
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="jobNameLike" id="jobNameLike" placeholder="请输入任务类名"
+                                   autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="jobMethodLike" id="jobMethodLike" placeholder="请输入任务方法名"
+                                   autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <select name="jobStatus" id="jobStatus" lay-verify="">
+                                <option value="-1" selected>请选择任务状态</option>
+                                <option value="0">已启用</option>
+                                <option value="1">已停止</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button class="layui-btn" id="addTaskButton" style="display: none"
+                            onclick="xadmin.open('添加任务',api.job.addHtml,800,600)"><i
+                            class="layui-icon"></i>添加
+                    </button>
+                </div>
+                <div class="layui-card-body ">
+                    <table class="layui-table"
+                           id="taskList" lay-filter="currentTableFilter">
+                    </table>
+                    <script type="text/html" id="currentTableBar">
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        const table = layui.table;
+        const form = layui.form;
+        const $ = layui.jquery;
+
+        //加载分页列表
+        table.render({
+            elem: '#taskList'
+            , url: api.job.listPage
+            , page: true,
+            request: {
+                page: 1, //页码的参数名称，默认：page
+                limit: 10//每页数据量的参数名，默认：limit
+            }
+            , cols: [[ //表头
+                {field: 'id', title: '任务ID', width: 100, fixed: 'left'},
+                {field: 'jobClass', title: '任务类',},
+                {field: 'jobMethod', title: '任务方法'},
+                {field: 'jobArguments', title: '任务参数'},
+                {field: 'jobGroup', title: '任务组'},
+                {field: 'jobName', title: '任务名称'},
+                {field: 'jobStatus', title: '任务状态', templet: statusTpl},
+                {field: 'cronExpression', title: '任务调度参数'},
+                {field: 'description', title: '任务描述'},
+                {field: '', title: '操作', width: 75, templet: '#currentTableBar'}
+            ]],
+            limits: [10, 20, 30, 50, 100],
+            limit: 10
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (obj) {
+            //执行搜索重载
+            table.reload('taskList', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    jobNameLike: $("#jobNameLike").val(),
+                    jobStatus: $("#jobStatus").val(),
+                    jobMethodLike: $("#jobMethodLike").val(),
+                }
+            }, 'data');
+            return false;
+        });
+
+        //操作按钮监听
+        table.on('tool(currentTableFilter)', function (obj) {
+                const data = obj.data;
+                if (obj.event === 'edit') {
+                    xadmin.open('编辑任务', api.job.detailHtml + '?id=' + data.id, 800, 600);
+                } else if (obj.event === 'delete') {
+                    layer.confirm('确定删除[' + data.jobClass + '.' + data.jobMethod + ']？', {
+                        btn: ['确定', '取消']
+                    }, function () {
+                        AjaxRequest.aPost(api.job.delete, JSON.stringify({id: data.id}), function (r) {
+                            if (r.code === 0) {
+                                // layer.msg('任务删除成功', {offset: '6px'});
+                                ResponseMsg.successMsg('任务删除成功')
+                                layui.table.reload('taskList');
+                            } else {
+                                if (r.msg !== null && r.msg !== '') {
+                                    ResponseMsg.errorMsg('任务删除失败，' + r.msg, 2000);
+                                } else {
+                                    ResponseMsg.errorMsg('任务删除失败，请重试。');
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+        );
+
+        //监听状态变更提交
+        form.on('switch(switchJobStatus)', function (data) {
+            const x = data.elem.checked;
+            let content;
+            if (x) {
+                content = "确认启动任务？";
+            } else {
+                content = "确认关闭任务？";
+            }
+            layer.open({
+                content: content
+                , btn: ['确定', '取消']
+                , yes: function (index, layero) {
+                    data.elem.checked = x;
+                    form.render();
+                    layer.close(index);
+                    //按钮【按钮一】的回调
+                    if (x) {
+                        //启动任务
+                        AjaxRequest.aPost(api.job.start, JSON.stringify({id: data.value}), function (r) {
+                            if (r.code === 0) {
+                                layer.msg('任务已启动', {offset: '6px'});
+                                layui.table.reload('taskList');
+                            } else {
+                                if (r.msg !== '') {
+                                    ResponseMsg.errorMsg('任务启动失败，' + r.msg, 3000);
+                                } else {
+                                    ResponseMsg.errorMsg('任务启动失败，请重试。');
+                                }
+                                data.elem.checked = !x;
+                                form.render();
+                            }
+                        });
+                    } else {
+                        AjaxRequest.aPost(api.job.stop, JSON.stringify({id: data.value}), function (r) {
+                            if (r.code === 0) {
+                                // layer.msg('任务已停止', {offset: '6px'});
+                                ResponseMsg.successMsg('任务已停止')
+                                layui.table.reload('taskList');
+                            } else {
+                                if (r.msg !== null && r.msg !== '') {
+                                    ResponseMsg.errorMsg('任务停止失败，' + r.msg, 3000);
+                                } else {
+                                    ResponseMsg.errorMsg('任务停止失败，请重试。');
+                                }
+                                data.elem.checked = !x;
+                                form.render();
+                            }
+                        });
+                    }
+                }
+                , btn2: function (index, layero) {
+                    //按钮【按钮二】的回调
+                    data.elem.checked = !x;
+                    form.render();
+                    layer.close(index);
+                    //return false 开启该代码可禁止点击该按钮关闭
+                }
+                , cancel: function () {
+                    //右上角关闭回调
+                    data.elem.checked = !x;
+                    form.render();
+                    //return false 开启该代码可禁止点击该按钮关闭
+                }
+            });
+            return false;
+        });
+    });
+
+    //是否启用模板
+    const statusTpl = function (d) {
+        let isChecked = "";
+        if (d.jobStatus === 0) {
+            isChecked = "checked";
+        }
+        return '<input type="checkbox" lay-skin="switch" value="' + d.id + '" lay-filter="switchJobStatus" lay-text="已启动|已停止" ' + isChecked + '> ';
+    };
+</script>
+<script>
+    layui.use([], function () {
+        const $ = layui.jquery;
+        const functionsKeys = getValueByCookie("COOKIE_USER_INFO", "functions");
+        if (null !== functionsKeys && '' !== functionsKeys) {
+            const functionsKeysArray = functionsKeys.split(",");
+            let operatePower = '';
+            for (let j = 0; j < functionsKeysArray.length; j++) {
+                //添加
+                if (functionsKeysArray[j] === 'taskAdd') {
+                    $("#addTaskButton").show();
+                    continue;
+                }
+                //修改
+                if (functionsKeysArray[j] === 'taskUpdate') {
+                    operatePower = operatePower + '<a title="编辑" href="javascript:;" lay-event="edit"> <i class="layui-icon">&#xe642;</i> </a>';
+                    continue;
+                }
+                //删除
+                if (functionsKeysArray[j] === 'taskDelete') {
+                    operatePower = operatePower + '<a title="删除" href="javascript:;" lay-event="delete"><i class="layui-icon">&#xe640;</i></a>';
+                }
+            }
+            if ('' !== operatePower) {
+                $("#currentTableBar").html(operatePower);
+            }
+        }
+    });
+</script>
+</html>

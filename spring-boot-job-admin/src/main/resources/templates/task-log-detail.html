@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务管理平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/login.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">日志详情</div>
+                <div class="layui-card-body ">
+                    <table class="layui-table">
+                        <tbody>
+                        <tr>
+                            <th><strong>日志ID</strong></th>
+                            <td id="logId"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>日志类型</strong></th>
+                            <td id="logTypeDesc"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>操作人ID</strong></th>
+                            <td id="operateId"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>操作人名称</strong></th>
+                            <td id="operateName"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>操作时间</strong></th>
+                            <td id="createTime"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="arrayContent">
+                    <div class="layui-card-header">任务信息</div>
+                    <div class="layui-card-body ">
+                        <table class="layui-table">
+                            <tbody>
+                            <tr>
+                                <th></th>
+                                <td><strong>变更前</strong></td>
+                                <td><strong>变更后</strong></td>
+                            </tr>
+                            <tr id="jobIdTr">
+                                <th><strong>任务ID</strong></th>
+                                <td id="jobId"></td>
+                                <td id="jobId2"></td>
+                            </tr>
+                            <tr id="jobClassTr">
+                                <th><strong>任务类名</strong></th>
+                                <td id="jobClass"></td>
+                                <td id="jobClass2"></td>
+                            </tr>
+                            <tr id="jobMethodTr">
+                                <th><strong>任务方法</strong></th>
+                                <td id="jobMethod"></td>
+                                <td id="jobMethod2"></td>
+                            </tr>
+                            <tr id="jobArgumentsTr">
+                                <th><strong>任务参数</strong></th>
+                                <td id="jobArguments"></td>
+                                <td id="jobArguments2"></td>
+                            </tr>
+                            <tr id="jobGroupTr">
+                                <th><strong>任务组</strong></th>
+                                <td id="jobGroup"></td>
+                                <td id="jobGroup2"></td>
+                            </tr>
+                            <tr id="jobNameTr">
+                                <th><strong>任务名称</strong></th>
+                                <td id="jobName"></td>
+                                <td id="jobName2"></td>
+                            </tr>
+                            <tr id="cronExpressionTr">
+                                <th><strong>时间表达式</strong></th>
+                                <td id="cronExpression"></td>
+                                <td id="cronExpression2"></td>
+                            </tr>
+                            <tr id="descriptionTr">
+                                <th><strong>任务描述</strong></th>
+                                <td id="description"></td>
+                                <td id="description2"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="objContent">
+                <div class="layui-card-header">任务信息</div>
+                <div class="layui-card-body ">
+                    <table class="layui-table">
+                        <tbody>
+                        <tr>
+                            <th><strong>任务ID</strong></th>
+                            <td id="objJobId"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>任务类名</strong></th>
+                            <td id="objJobClass"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>任务方法</strong></th>
+                            <td id="objJobMethod"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>任务参数</strong></th>
+                            <td id="objJobArguments"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>任务组</strong></th>
+                            <td id="objJobGroup"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>任务名称</strong></th>
+                            <td id="objJobName"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>时间表达式</strong></th>
+                            <td id="objCronExpression"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>任务描述</strong></th>
+                            <td id="objDescription"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+</div>
+</body>
+<script>
+    layui.use(['form', 'layer'],
+        function () {
+            const $ = layui.jquery;
+            const form = layui.form;
+            const layer = layui.layer;
+            const reqParams = RequestParameter();
+            if (null == reqParams) {
+                history.back();
+            }
+            const logId = reqParams['id'];
+            if (null == logId) {
+                history.back();
+            }
+
+            AjaxRequest.aPost(api.job_log.detail, JSON.stringify({id: logId}), function (r) {
+                if (r.code === 0) {
+                    const data = r.data;
+                    $("#logId").html(data.id);
+                    $("#logTypeDesc").html(data.logDesc);
+                    $("#realName").html(data.realName);
+                    $("#operateId").html(data.operateId);
+                    $("#operateName").html(data.operateName);
+                    $("#createTime").html(data.createTimeStr);
+                    if (data.jobId !== null && null !== data.content && '' !== data.content) {
+                        const content = data.content;
+                        const jobJson = JSON.parse(content);
+                        const jobId = jobJson.id;
+                        const idType = typeof jobId;
+                        if (idType === 'object' && jobId[0] !== null) {
+                            $("#objContent").hide();
+                            $("#arrayContent").show();
+                            //任务ID
+                            $("#jobId").html(jobJson.id[0] == null ? '' : jobJson.id[0]);
+                            $("#jobId2").html(jobJson.id[1] == null ? '' : jobJson.id[1]);
+                            if (jobJson.id[0] !== jobJson.id[1]) {
+                                $("#jobIdTr").css("background", "#77DDFF");
+                            }
+
+                            //任务类
+                            $("#jobClass").html(jobJson.jobClass[0] == null ? '' : jobJson.jobClass[0]);
+                            $("#jobClass2").html(jobJson.jobClass[1] == null ? '' : jobJson.jobClass[1]);
+                            if (jobJson.jobClass[0] !== jobJson.jobClass[1]) {
+                                $("#jobClassTr").css("background", "#77DDFF");
+                            }
+
+                            //任务方法
+                            $("#jobMethod").html(jobJson.jobMethod[0] == null ? '' : jobJson.jobMethod[0]);
+                            $("#jobMethod2").html(jobJson.jobMethod[1] == null ? '' : jobJson.jobMethod[1]);
+                            if (jobJson.jobClass[0] !== jobJson.jobClass[1]) {
+                                $("#jobMethodTr").css("background", "#77DDFF");
+                            }
+
+                            //任务参数
+                            $("#jobArguments").html(jobJson.jobArguments[0] == null ? '' : jobJson.jobArguments[0]);
+                            $("#jobArguments2").html(jobJson.jobArguments[1] == null ? '' : jobJson.jobArguments[1]);
+                            if (jobJson.jobArguments[0] !== jobJson.jobArguments[1]) {
+                                $("#jobArgumentsTr").css("background", "#77DDFF");
+                            }
+
+                            //任务组
+                            $("#jobGroup").html(jobJson.jobGroup[0] == null ? '' : jobJson.jobGroup[0]);
+                            $("#jobGroup2").html(jobJson.jobGroup[1] == null ? '' : jobJson.jobGroup[1]);
+                            if (jobJson.jobGroup[0] !== jobJson.jobGroup[1]) {
+                                $("#jobGroupTr").css("background", "#77DDFF");
+                            }
+
+                            //任务名称
+                            $("#jobName").html(jobJson.jobName[0] == null ? '' : jobJson.jobName[0]);
+                            $("#jobName2").html(jobJson.jobName[1] == null ? '' : jobJson.jobName[1]);
+                            if (jobJson.jobName[0] !== jobJson.jobName[1]) {
+                                $("#jobNameTr").css("background", "#77DDFF");
+                            }
+
+                            //时间表达式
+                            $("#cronExpression").html(jobJson.cronExpression[0] == null ? '' : jobJson.cronExpression[0]);
+                            $("#cronExpression2").html(jobJson.cronExpression[1] == null ? '' : jobJson.cronExpression[1]);
+                            if (jobJson.cronExpression[0] !== jobJson.cronExpression[1]) {
+                                $("#cronExpressionTr").css("background", "#77DDFF");
+                            }
+
+                            //任务描述
+                            $("#description").html(jobJson.description[0] == null ? '' : jobJson.description[0]);
+                            $("#description2").html(jobJson.description[1] == null ? '' : jobJson.description[1]);
+                            if (jobJson.description[0] !== jobJson.description[1]) {
+                                $("#descriptionTr").css("background", "#77DDFF");
+                            }
+                        } else {
+                            $("#arrayContent").hide();
+                            $("#objContent").show();
+                            $("#objJobId").html(jobJson.id == null ? 0 : jobJson.id);
+                            $("#objJobClass").html(jobJson.jobClass == null ? '' : jobJson.jobClass);
+                            $("#objJobMethod").html(jobJson.jobMethod == null ? '' : jobJson.jobMethod);
+                            $("#objJobArguments").html(jobJson.jobArguments == null ? '' : jobJson.jobArguments);
+                            $("#objJobGroup").html(jobJson.jobGroup == null ? '' : jobJson.jobGroup);
+                            $("#objJobName").html(jobJson.jobName == null ? '' : jobJson.jobName);
+                            $("#objCronExpression").html(jobJson.cronExpression == null ? '' : jobJson.cronExpression);
+                            $("#objDescription").html(jobJson.description == null ? '' : jobJson.description);
+                        }
+                    }
+                } else {
+                    if (r.msg !== null && r.msg !== '') {
+                        ResponseMsg.errorMsg('退出失败，' + r.msg);
+                    } else {
+                        ResponseMsg.errorMsg('退出失败，请重试。');
+                    }
+                }
+            });
+        })
+    ;
+</script>
+</html>

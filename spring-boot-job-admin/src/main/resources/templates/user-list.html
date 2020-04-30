@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务管理平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/login.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+    <script th:src="@{../static/layui/js/xadmin.js}" charset="utf-8"></script>
+
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="usernameLike" id="usernameLike" placeholder="请输入用户名"
+                                   autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="realNameLike" id="realNameLike" placeholder="请输入姓名"
+                                   autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <select name="userStatus" id="userStatus" lay-verify="">
+                                <option value="-1" selected>请选择状态</option>
+                                <option value="1">启用</option>
+                                <option value="2">停用</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <select name="adminFlag" id="adminFlag" lay-verify="">
+                                <option value="-1" selected>请选择是否管理员</option>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button class="layui-btn" style="display: none" id="addUserButton"
+                            onclick="xadmin.open('添加用户','/user-add',800,600)"><i
+                            class="layui-icon"></i>添加
+                    </button>
+                </div>
+                <div class="layui-card-body ">
+                    <table class="layui-table"
+                           id="userList" lay-filter="currentTableFilter">
+                    </table>
+                    <script type="text/html" id="currentTableBar">
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        const table = layui.table;
+        const form = layui.form;
+        const $ = layui.jquery;
+
+        table.render({
+            elem: '#userList'
+            , url: api.user.listPage
+            , page: true,
+            request: {
+                page: 1, //页码的参数名称，默认：page
+                limit: 10//每页数据量的参数名，默认：limit
+            }
+            , cols: [[ //表头
+                {field: 'id', title: '用户ID', width: 120, fixed: 'left'},
+                {field: 'username', title: '用户名', width: 120},
+                {field: 'realName', title: '真实姓名', width: 100},
+                {field: 'userStatus', title: '状态', width: 90, templet: statusTpl},
+                {field: 'adminFlag', title: '是否管理员', width: 100, templet: adminFlagTpl},
+                {field: 'createName', title: '创建者', width: 100},
+                {field: 'updateName', title: '更新者', width: 100},
+                {
+                    field: 'createTime',
+                    width: 150,
+                    title: '创建时间',
+                    templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                },
+                {
+                    field: 'updateTime',
+                    width: 150,
+                    title: '更新时间',
+                    templet: "<div>{{layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                },
+                {field: 'lastLoginTime', width: 150, title: '最后登录时间'},
+                {field: '', title: '操作', width: 130, fixed: 'right', templet: '#currentTableBar'}
+            ]],
+            limits: [10, 20, 30, 50, 100],
+            limit: 10
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (obj) {
+            //执行搜索重载
+            table.reload('userList', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    usernameLike: $("#usernameLike").val(),
+                    userStatus: $("#userStatus").val(),
+                    realNameLike: $("#realNameLike").val(),
+                    adminFlag: $("#adminFlag").val()
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+                const data = obj.data;
+                if (obj.event === 'edit') {
+                    xadmin.open('编辑人员', api.user.update_detail_html + '?id=' + data.id, 800, 600);
+                } else if (obj.event === 'editPwd') {
+                    xadmin.open('修改密码', api.user.update_pwd_html + '?id=' + data.id, 400, 400);
+                } else if (obj.event === 'editPower') {
+                    xadmin.open('修改权限', api.user.update_power_html + '?id=' + data.id, 800, 600);
+                } else if (obj.event === 'delete') {
+                    layer.confirm('确定删除 [' + data.realName + ']？', {
+                        btn: ['确定', '取消']
+                    }, function () {
+                        AjaxRequest.aPost(api.user.delete, JSON.stringify({id: data.id}), function (r) {
+                            if (r.code === 0) {
+                                layer.msg('删除成功', {
+                                    offset: '15px', icon: 1, time: 500
+                                });
+                                layui.table.reload('userList');
+                            } else {
+                                if (r.msg !== null && r.msg !== '') {
+                                    ResponseMsg.errorMsg('删除失败，' + r.msg);
+                                } else {
+                                    ResponseMsg.errorMsg('删除失败，请重试。');
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+        );
+    });
+
+    //人员状态
+    const statusTpl = function (data) {
+        let statusStr = "已停用";
+        if (data.userStatus === 1) {
+            statusStr = "已启用";
+        } else if (data.userStatus === 3) {
+            statusStr = "已锁定";
+        }
+        return '<span class="layui-btn layui-btn-normal layui-btn-mini">' + statusStr + '</span></td>';
+    };
+
+    //人员状态
+    const adminFlagTpl = function (data) {
+        let adminFlagStr = "否";
+        if (data.adminFlag === 1) {
+            adminFlagStr = "是";
+        }
+        return '<span>' + adminFlagStr + '</span></td>';
+    };
+</script>
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        const table = layui.table;
+        const form = layui.form;
+        const $ = layui.jquery;
+        const functionsKeys = getValueByCookie("COOKIE_USER_INFO", "functions");
+        if (null !== functionsKeys && '' !== functionsKeys) {
+            const functionsKeysArray = functionsKeys.split(",");
+            let operatePower = '';
+            for (let j = 0; j < functionsKeysArray.length; j++) {
+                //添加
+                if (functionsKeysArray[j] === 'userAdd') {
+                    $("#addUserButton").show();
+                    continue;
+                }
+                //修改
+                if (functionsKeysArray[j] === 'userUpdate') {
+                    operatePower = operatePower + '<a title="编辑" href="javascript:;" lay-event="edit"><i class="layui-icon">&#xe642;</i></a>';
+                    continue;
+                }
+                //修改人员密码
+                if (functionsKeysArray[j] === 'userUpdatePwd') {
+                    operatePower = operatePower + '<a title="修改密码" href="javascript:;" lay-event="editPwd"><i class="layui-icon">&#xe673;</i></a>';
+                    continue;
+                }
+                //修改人员权限
+                if (functionsKeysArray[j] === 'userUpdatePower') {
+                    operatePower = operatePower + '{{#  if(d.adminFlag != 1){ }} <a title="修改权限" href="javascript:;" lay-event="editPower"><i class="layui-icon">&#xe672;</i></a> {{#  } }}';
+                    continue;
+                }
+                //删除人员
+                if (functionsKeysArray[j] === 'userDelete') {
+                    operatePower = operatePower + '<a title="删除" href="javascript:;" lay-event="delete"> <i class="layui-icon">&#xe640;</i> </a>';
+                }
+            }
+            if ('' !== operatePower) {
+                $("#currentTableBar").html(operatePower);
+            }
+        }
+    });
+</script>
+</html>

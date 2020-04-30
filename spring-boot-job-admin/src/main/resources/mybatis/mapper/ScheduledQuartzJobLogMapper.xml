@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.admin.dao.mapper.ScheduledQuartzJobLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.admin.dao.bean.ScheduledQuartzJobLogInfo">
+        <id column="id" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="project_key" property="projectKey" jdbcType="VARCHAR" javaType="String"/>
+        <result column="content" property="content" jdbcType="VARCHAR" javaType="String"/>
+        <result column="log_desc" property="logDesc" jdbcType="VARCHAR" javaType="String"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" javaType="String"/>
+        <result column="operate_id" property="operateId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="operate_name" property="operateName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="job_id" property="jobId" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="log_type" property="logType" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+    <resultMap id="PageListResultMap" type="com.example.admin.web.param.vo.ScheduledQuartzJobLogItemVO">
+        <id column="id" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="log_desc" property="logDesc" jdbcType="VARCHAR" javaType="String"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" javaType="String"/>
+        <result column="operate_id" property="operateId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="operate_name" property="operateName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="job_id" property="jobId" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="job_name" property="jobName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="job_class" property="jobClass" jdbcType="VARCHAR" javaType="String"/>
+        <result column="log_type" property="logType" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,project_key,content,log_desc,remarks,operate_id
+        ,operate_name,job_id,log_type,create_time,update_time
+    </sql>
+
+    <insert id="addLog">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO scheduled_quartz_job_log(
+        id,
+        project_key,
+        job_id,
+        log_type,
+        log_desc,
+        content,
+        operate_id,
+        operate_name,
+        remarks
+        )VALUES
+        (
+        null,
+        #{projectKey,jdbcType=VARCHAR},
+        #{jobId,jdbcType=INTEGER},
+        #{logType,jdbcType=TINYINT},
+        #{logDesc,jdbcType=VARCHAR},
+        #{content,jdbcType=VARCHAR},
+        #{operateId,jdbcType=VARCHAR},
+        #{operateName,jdbcType=VARCHAR},
+        #{remarks,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM scheduled_quartz_job_log
+        WHERE
+        id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getByJobId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM scheduled_quartz_job_log
+        WHERE
+        job_id = #{jobId,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByCondition" parameterType="com.example.admin.dao.dto.JobTaskLogPageQueryDTO"
+            resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM scheduled_quartz_job_log a
+        INNER join scheduled_quartz_job b on a.job_id=b.id
+        WHERE
+        a.project_key=#{projectKey,jdbcType=VARCHAR}
+        <if test="jobId !=null">
+            AND a.job_id =#{jobId,jdbcType=INTEGER}
+        </if>
+        <if test="jobNameLike != null and jobNameLike !='' ">
+            AND b.job_name LIKE CONCAT(#{jobNameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="logType !=null and logType!= -1">
+            AND a.log_type =#{logType,jdbcType=TINYINT}
+        </if>
+        <if test="operateId !=null and operateId!= ''">
+            AND a.operate_id =#{operateId,jdbcType=VARCHAR}
+        </if>
+        <if test="operateNameLike !=null and operateNameLike!= ''">
+            AND a.operate_name LIKE CONCAT(#{operateNameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="contentLike != null and contentLike !='' ">
+            AND a.content LIKE CONCAT(#{contentLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="createStartTime != null ">
+            AND a.create_time <![CDATA[ >= ]]> #{createStartTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="createEndTime != null ">
+            AND a.create_time <![CDATA[ <= ]]> #{createEndTime,jdbcType=TIMESTAMP}
+        </if>
+    </select>
+
+    <select id="listPageByCondition" parameterType="com.example.admin.dao.dto.JobTaskLogPageQueryDTO"
+            resultMap="PageListResultMap">
+        SELECT
+        a.id,
+        a.log_desc,
+        a.remarks,
+        a.operate_id,
+        a.operate_name,
+        a.job_id,
+        b.job_name,
+        b.job_class,
+        a.log_type,
+        a.create_time,
+        a.update_time
+        FROM scheduled_quartz_job_log a
+        INNER JOIN scheduled_quartz_job b on a.job_id=b.id
+        WHERE
+        a.project_key=#{projectKey,jdbcType=VARCHAR}
+        <if test="jobId !=null">
+            AND a.job_id =#{jobId,jdbcType=INTEGER}
+        </if>
+        <if test="jobNameLike != null and jobNameLike !='' ">
+            AND b.job_name LIKE CONCAT(#{jobNameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="logType !=null and logType!= -1">
+            AND a.log_type =#{logType,jdbcType=TINYINT}
+        </if>
+        <if test="operateId !=null and operateId!= ''">
+            AND a.operate_id =#{operateId,jdbcType=VARCHAR}
+        </if>
+        <if test="operateNameLike !=null and operateNameLike!= ''">
+            AND a.operate_name LIKE CONCAT(#{operateNameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="contentLike != null and contentLike !='' ">
+            AND a.content LIKE CONCAT(#{contentLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="createStartTime != null ">
+            AND a.create_time <![CDATA[ >= ]]> #{createStartTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="createEndTime != null ">
+            AND a.create_time <![CDATA[ <= ]]> #{createEndTime,jdbcType=TIMESTAMP}
+        </if>
+        ORDER BY a.create_time DESC
+        LIMIT #{limit},#{pageSize}
+    </select>
+
+</mapper>

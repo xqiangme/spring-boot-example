@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.admin.dao.mapper.ScheduledQuartzUserMapper">
+
+    <resultMap type="com.example.admin.dao.bean.ScheduledQuartUserInfo" id="BaseResultMap">
+        <result property="id" column="id"/>
+        <result property="projectKey" column="project_key"/>
+        <result property="username" column="username"/>
+        <result property="salt" column="salt"/>
+        <result property="password" column="password"/>
+        <result property="realName" column="real_name"/>
+        <result property="adminFlag" column="admin_flag"/>
+        <result property="userStatus" column="user_status"/>
+        <result property="menus" column="menus"/>
+        <result property="remarks" column="remarks"/>
+        <result property="functions" column="functions"/>
+        <result property="lastLoginTimestamp" column="last_login_timestamp"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createName" column="create_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="User_All_Columns">
+        id, project_key, username,salt, password, real_name,
+        admin_flag,user_status,menus,functions,remarks,last_login_timestamp, create_by,create_name, create_time,
+        update_by,update_name,
+        update_time, del_flag
+    </sql>
+
+    <insert id="addUser" parameterType="com.example.admin.dao.bean.ScheduledQuartUserInfo">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO scheduled_quartz_user
+        (
+        project_key,
+        username,
+        salt,
+        password,
+        real_name,
+        admin_flag,
+        user_status,
+        remarks,
+        create_by,
+        create_name,
+        update_by,
+        update_name
+        )
+        VALUES
+        (
+        #{projectKey,jdbcType=VARCHAR},
+        #{username,jdbcType=VARCHAR},
+        #{salt,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        #{realName,jdbcType=VARCHAR},
+        #{adminFlag,jdbcType=TINYINT},
+        #{userStatus,jdbcType=TINYINT},
+        #{remarks,jdbcType=VARCHAR},
+        #{createBy,jdbcType=VARCHAR},
+        #{createName,jdbcType=VARCHAR},
+        #{updateBy,jdbcType=VARCHAR},
+        #{updateName,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateSelectiveById" parameterType="com.example.admin.dao.bean.ScheduledQuartzJobInfo">
+        UPDATE scheduled_quartz_user
+        <set>
+            <if test="username!=null">
+                username=#{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password!=null">
+                password=#{password,jdbcType=VARCHAR},
+            </if>
+            <if test="realName!=null">
+                real_name=#{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminFlag!=null">
+                admin_flag=#{adminFlag,jdbcType=TINYINT},
+            </if>
+            <if test="userStatus!=null">
+                user_status=#{userStatus,jdbcType=TINYINT},
+            </if>
+            <if test="menus!=null">
+                menus=#{menus,jdbcType=VARCHAR},
+            </if>
+            <if test="functions!=null">
+                functions=#{functions,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks!=null">
+                remarks=#{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTimestamp!=null">
+                last_login_timestamp=#{lastLoginTimestamp,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy!=null">
+                update_by=#{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateName!=null">
+                update_name=#{updateName,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag!=null">
+                del_flag=#{delFlag,jdbcType=TINYINT},
+            </if>
+        </set>
+        WHERE del_flag=0 AND id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="deleteByProjectAndId">
+        UPDATE scheduled_quartz_user
+        SET del_flag = 1
+        <if test="updateBy!=null">
+            ,update_by=#{updateBy,jdbcType=VARCHAR}
+        </if>
+        WHERE project_key=#{projectKey,jdbcType=VARCHAR} AND id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="getById" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="User_All_Columns"/>
+        FROM scheduled_quartz_user
+        WHERE del_flag=0 AND id=#{id,jdbcType=INTEGER}
+        LIMIT 1
+    </select>
+
+    <select id="getByProjectAndUsername" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="User_All_Columns"/>
+        FROM scheduled_quartz_user
+        WHERE del_flag=0 AND project_key=#{projectKey,jdbcType=VARCHAR} AND username=#{username,jdbcType=VARCHAR}
+        LIMIT 1
+    </select>
+
+    <select id="countByProjectAndUsername" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM scheduled_quartz_user
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        AND username=#{username,jdbcType=VARCHAR}
+    </select>
+
+    <select id="countByProjectAndUsernameExcludeId" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM scheduled_quartz_user
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        AND username=#{username,jdbcType=VARCHAR}
+        AND id!=#{excludeId,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByCondition" parameterType="com.example.admin.dao.dto.JobUserPageQueryDTO"
+            resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM scheduled_quartz_user
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        <if test="userStatus !=null and userStatus!=-1 ">
+            AND user_status=#{userStatus,jdbcType=INTEGER}
+        </if>
+        <if test="adminFlag !=null and adminFlag!=-1 ">
+            AND admin_flag=#{adminFlag,jdbcType=INTEGER}
+        </if>
+        <if test="usernameLike !=null and usernameLike!='' ">
+            AND username LIKE CONCAT('%',#{usernameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="realNameLike != null and realNameLike !='' ">
+            AND real_name LIKE CONCAT('%',#{realNameLike,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <select id="listPageByCondition" parameterType="com.example.admin.dao.dto.JobUserPageQueryDTO"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="User_All_Columns"/>
+        FROM scheduled_quartz_user
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        <if test="userStatus !=null and userStatus!=-1 ">
+            AND user_status=#{userStatus,jdbcType=INTEGER}
+        </if>
+        <if test="adminFlag !=null and adminFlag!=-1 ">
+            AND admin_flag=#{adminFlag,jdbcType=INTEGER}
+        </if>
+        <if test="usernameLike !=null and usernameLike!='' ">
+            AND username LIKE CONCAT('%',#{usernameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="realNameLike != null and realNameLike !='' ">
+            AND real_name LIKE CONCAT('%',#{realNameLike,jdbcType=VARCHAR},'%')
+        </if>
+        LIMIT #{limit},#{pageSize}
+    </select>
+</mapper>

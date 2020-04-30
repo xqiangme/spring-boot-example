@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务管理平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+    <script th:src="@{../static/layui/js/xadmin.js}" charset="utf-8"></script>
+    <script th:src="@{../static/layui/js/md5.js}" charset="utf-8"></script>
+
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]--></head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <input type="hidden" id="id" name="id"/>
+            <div class="layui-form-item">
+                <label for="username" class="layui-form-label">
+                    <span class="x-red">*</span>用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="username" name="username" required="" lay-verify="required|usernameCheck"
+                           autocomplete="off" class="layui-input"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="password" class="layui-form-label">
+                    <span class="x-red">*</span>密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" id="password" name="password" required="" lay-verify="required|passwordCheck"
+                           autocomplete="off"
+                           class="layui-input"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="realName" class="layui-form-label">
+                    <span class="x-red">*</span>真实姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="realName" name="realName" required="" lay-verify="required|realNameCheck"
+                           autocomplete="off" class="layui-input"></div>
+            </div>
+            <div class="layui-form-item">
+                <label for="adminFlag" class="layui-form-label">
+                    <span class="x-red">*</span>是否管理员</label>
+                <div class="layui-input-inline">
+                    <select id="adminFlag" name="adminFlag" class="valid">
+                        <option value="0">否</option>
+                        <option value="1">是</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label for="remarks" class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="" id="remarks" name="remarks" class="layui-textarea"
+                              lay-verify="remarksCheck"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="addUser" class="layui-form-label"></label>
+                <button class="layui-btn" id="addUser" lay-filter="addUser" style="width:15%;" lay-submit=""
+                        type="submit">保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'layer'],
+        function () {
+            const $ = layui.jquery;
+            const form = layui.form;
+            const layer = layui.layer;
+
+            //监听提交
+            form.on('submit(addUser)', function (data) {
+                const tData = data.field;
+                const username = tData.username;
+                const password = tData.password;
+                const md5Password = hex_md5(password);
+                const realName = tData.realName;
+                const adminFlag = tData.adminFlag;
+                const remarks = $("#remarks").val();
+                const jsonParam = JSON.stringify({
+                    username: username,
+                    password: md5Password,
+                    realName: realName,
+                    adminFlag: adminFlag,
+                    remarks: remarks
+                });
+                AjaxRequest.aPost(api.user.save, jsonParam, function (r) {
+                    if (r.code === 0) {
+                        layer.msg('添加成功', {
+                            offset: '15px', icon: 1, time: 500
+                        }, function () {
+                            // 获得frame索引；
+                            const index = parent.layer.getFrameIndex(window.name);
+                            //关闭当前frame
+                            parent.layer.close(index);
+                            window.parent.location.reload();
+                        });
+                    } else {
+                        if (r.msg !== null && r.msg !== '') {
+                            ResponseMsg.errorMsg('添加失败，' + r.msg);
+                        } else {
+                            ResponseMsg.errorMsg('添加失败，请重试。');
+                        }
+                    }
+                });
+                return false;
+            });
+
+            //参数校验
+            form.verify({
+                //value：表单的值、item：表单的DOM对象
+                usernameCheck: function (value, item) {
+                    if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                        return '用户名名里不能有特殊字符';
+                    }
+                    if (/^\d+\d+\d$/.test(value)) {
+                        return '用户名名不能全为数字';
+                    }
+                    if (value.length > 30) {
+                        return '用户名长度不能超过 30 位';
+                    }
+                },
+                passwordCheck: function (value, item) {
+                    if (value.length < 6) {
+                        return '密码长度不能小于 6 位';
+                    }
+                    if (value.length > 30) {
+                        return '密码长度不能大于 30 位';
+                    }
+                },
+                realNameCheck: function (value, item) {
+                    if (value.length > 45) {
+                        return '真实姓名长度不能超过 45 位';
+                    }
+                }, remarksCheck: function (value, item) {
+                    if (value.length > 100) {
+                        return '备注长度不能超过 100 位';
+                    }
+                }
+            });
+        });
+</script>
+
+</body>
+</html>

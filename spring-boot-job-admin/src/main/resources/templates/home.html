@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/login.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="x-nav">
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <blockquote class="layui-elem-quote">登录成功，欢迎您：
+                        <span class="x-red" id="currentUserRealName"> </span> ！当前时间 : <span id="currentTime"></span>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">任务统计</div>
+                <div class="layui-card-body ">
+                    <ul class="layui-row layui-col-space10 layui-this x-admin-carousel x-admin-backlog">
+                        <li class="layui-col-md2 layui-col-xs6">
+                            <a href="javascript:;" class="x-admin-backlog-body">
+                                <h3>任务总数</h3>
+                                <p><cite id="jobTotal"></cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-md2 layui-col-xs6">
+                            <a href="javascript:;" class="x-admin-backlog-body">
+                                <h3>已启动</h3>
+                                <p><cite id="enableJobTotal"></cite></p>
+                            </a>
+                        </li>
+                        <li class="layui-col-md2 layui-col-xs6">
+                            <a href="javascript:;" class="x-admin-backlog-body">
+                                <h3>已停止</h3>
+                                <p><cite id="stopJobTotal"></cite></p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">系统信息</div>
+                <div class="layui-card-body ">
+                    <table class="layui-table">
+                        <tbody>
+                        <tr>
+                            <th>操作系统</th>
+                            <td id="systemName"></td>
+                        </tr>
+                        <tr>
+                            <th>操作用户</th>
+                            <td id="systemUser"></td>
+                        </tr>
+                        <tr>
+                            <th>系统版本</th>
+                            <td id="systemVersion"></td>
+                        </tr>
+                        <tr>
+                            <th>Java环境</th>
+                            <td id="javaVersion"></td>
+                        </tr>
+                        <tr>
+                            <th>启动端口</th>
+                            <td id="port"></td>
+                        </tr>
+                        <tr>
+                            <th>启动时间</th>
+                            <td id="startTime"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">内存信息</div>
+                <div class="layui-card-body ">
+                    <table class="layui-table">
+                        <tbody>
+                        <tr>
+                            <th>指定总内存</th>
+                            <td id="maxMemory"></td>
+                        </tr>
+                        <tr>
+                            <th>总可用内存</th>
+                            <td id="freeMemory"></td>
+                        </tr>
+                        <tr>
+                            <th>总分配内存</th>
+                            <td id="totalMemory"></td>
+                        </tr>
+                        <tr>
+                            <th>已用内存</th>
+                            <td id="usedMemory"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">线程信息</div>
+                <div class="layui-card-body ">
+                    <table class="layui-table">
+                        <tbody>
+                        <tr>
+                            <th>当前活动线程数</th>
+                            <td id="activeThreadCount"></td>
+                        </tr>
+                        <tr>
+                            <th>活动线程数</th>
+                            <td id="peakThreadCount"></td>
+                        </tr>
+                        <tr>
+                            <th>活动守护线程数</th>
+                            <td id="daemonThreadCount"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+<script>
+    layui.use(['form', 'layer'],
+        function () {
+            const $ = layui.jquery;
+            const realName = getValueByCookie("COOKIE_USER_INFO", "realName");
+            $("#currentUserRealName").html(realName);
+
+            //请求出接口
+            AjaxRequest.aPost(api.job.homeCount, JSON.stringify({}), function (r) {
+                if (r.code === 0) {
+                    const data = r.data;
+                    $("#currentTime").html(data.currentTime == null ? '' : data.currentTime);
+                    $("#jobTotal").html(data.jobTotal == null ? '' : data.jobTotal);
+                    $("#enableJobTotal").html(data.enableJobTotal == null ? '' : data.enableJobTotal);
+                    $("#stopJobTotal").html(data.stopJobTotal == null ? '' : data.stopJobTotal);
+                    $("#port").html(data.port == null ? '' : data.port);
+                    $("#startTime").html(data.startTime == null ? '' : data.startTime);
+                    $("#systemName").html(data.systemName == null ? '' : data.systemName);
+                    $("#systemUser").html(data.systemUser == null ? '' : data.systemUser);
+                    $("#systemVersion").html(data.systemVersion == null ? '' : data.systemVersion);
+                    $("#javaVersion").html(data.javaVersion == null ? '' : data.javaVersion);
+                    $("#activeThreadCount").html(data.activeThreadCount == null ? '' : data.activeThreadCount);
+                    $("#peakThreadCount").html(data.peakThreadCount == null ? '' : data.peakThreadCount);
+                    $("#daemonThreadCount").html(data.daemonThreadCount == null ? '' : data.daemonThreadCount);
+                    $("#maxMemory").html(data.maxMemory == null ? '' : data.maxMemory);
+                    $("#freeMemory").html(data.freeMemory == null ? '' : data.freeMemory);
+                    $("#totalMemory").html(data.totalMemory == null ? '' : data.totalMemory);
+                    $("#usedMemory").html(data.usedMemory == null ? '' : data.usedMemory);
+                }
+            });
+        });
+</script>
+</html>

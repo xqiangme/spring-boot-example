@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务管理平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!--  <div class="layui-card-header">个人信息</div> -->
+                <div class="layui-card-body ">
+                    <table class="layui-table">
+                        <tbody>
+                        <tr>
+                            <th>用户ID</th>
+                            <td id="userId"></td>
+                        </tr>
+                        <tr>
+                            <th>用户名</th>
+                            <td id="username"></td>
+                        </tr>
+                        <tr>
+                            <th>真实姓名</th>
+                            <td id="realName"></td>
+                        </tr>
+                        <tr>
+                            <th>状态</th>
+                            <td id="userStatus"></td>
+                        </tr>
+                        <tr>
+                            <th>最后登录时间</th>
+                            <td id="lastLoginTime"></td>
+                        </tr>
+                        <tr>
+                            <th>创建者ID</th>
+                            <td id="createBy"></td>
+                        </tr>
+                        <tr>
+                            <th>创建者名称</th>
+                            <td id="createName"></td>
+                        </tr>
+                        <tr>
+                            <th>创建时间</th>
+                            <td id="createTime"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+<script>
+    layui.use(['form', 'layer'],
+        function () {
+            const $ = layui.jquery;
+            AjaxRequest.aPost(api.user.getPerson, JSON.stringify({}), function (r) {
+                if (r.code === 0) {
+                    const data = r.data;
+                    $("#userId").html(data.id);
+                    $("#username").html(data.username);
+                    $("#realName").html(data.realName);
+                    $("#lastLoginTime").html(data.lastLoginTime);
+                    $("#createBy").html(data.createBy);
+                    $("#createName").html(data.createName);
+                    $("#createTime").html(data.createTimeStr);
+                    $("#userStatus").html(data.userStatusStr);
+                } else {
+                    if (r.msg !== null && r.msg !== '') {
+                        ResponseMsg.errorMsg('查看详情失败，' + r.msg);
+                    } else {
+                        ResponseMsg.errorMsg('查看详情失败，请重试。');
+                    }
+                }
+            });
+        });
+
+</script>
+</html>

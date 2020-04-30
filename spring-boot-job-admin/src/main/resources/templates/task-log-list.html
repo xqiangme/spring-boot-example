@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务管理平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/login.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+    <script th:src="@{../static/layui/js/xadmin.js}" charset="utf-8"></script>
+
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input" autocomplete="off" placeholder="操作开始时间" name="createStartTime"
+                                   id="createStartTime">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input" autocomplete="off" placeholder="操作结束时间" name="createEndTime"
+                                   id="createEndTime">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="jobNameLike" id="jobNameLike" placeholder="请输入任务名称"
+                                   autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="operateNameLike" id="operateNameLike" placeholder="请输入操作人名称"
+                                   autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <select name="logType" id="logType" lay-verify="">
+                                <option value="-1" selected>请选择日志类型</option>
+                                <option value="1">新增</option>
+                                <option value="2">修改</option>
+                                <option value="3">启动</option>
+                                <option value="4">停止</option>
+                                <option value="5">删除</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-body ">
+                    <table class="layui-table"
+                           id="taskList" lay-filter="currentTableFilter">
+                    </table>
+                    <script type="text/html" id="currentTableBar">
+                        <a title="查看" href="javascript:;" lay-event="showDetail">
+                            <!-- <i class="layui-icon">&#xe642;</i>-->
+                            <i class="iconfont left-nav-li" lay-tips="查看">&#xe6e6;</i>
+                        </a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+
+        //时间选择器
+        laydate.render({
+            elem: '#createStartTime' //指定元素
+            , type: 'datetime'
+        });
+
+        //时间选择器
+        laydate.render({
+            elem: '#createEndTime' //指定元素
+            , type: 'datetime'
+        });
+    });
+</script>
+
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        const table = layui.table;
+        const form = layui.form;
+        const $ = layui.jquery;
+
+        //第一个实例
+        table.render({
+            elem: '#taskList'
+            , url: api.job_log.listPage
+            , page: true,
+            request: {
+                page: 1, //页码的参数名称，默认：page
+                limit: 10//每页数据量的参数名，默认：limit
+            }
+            , cols: [[ //表头
+                {field: 'id', title: '日志ID', width: 100, fixed: 'left'},
+                {field: 'jobId', title: '任务ID'},
+                {field: 'jobName', title: '任务名称'},
+                {field: 'jobClass', title: '任务类'},
+                {field: 'logDesc', title: '日志类型'},
+                {field: 'operateId', title: '操作人ID'},
+                {field: 'operateName', title: '操作人名称'},
+                {
+                    field: 'createTime',
+                    width: 150,
+                    title: '操作时间',
+                    templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"
+                },
+                {field: '', title: '操作', width: 75, templet: '#currentTableBar', fixed: 'right'}
+            ]],
+            limits: [10, 20, 30, 50, 100],
+            limit: 10
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (obj) {
+            //执行搜索重载
+            table.reload('taskList', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    jobNameLike: $("#jobNameLike").val(),
+                    logType: $("#logType").val(),
+                    operateNameLike: $("#operateNameLike").val(),
+                    createStartTime: $("#createStartTime").val(),
+                    createEndTime: $("#createEndTime").val(),
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+                const data = obj.data;
+                if (obj.event === 'showDetail') {
+                    xadmin.open('日志详情', '/task-log-detail?id=' + data.id, 800, 600);
+                }
+            }
+        );
+    });
+</script>
+
+
+</html>

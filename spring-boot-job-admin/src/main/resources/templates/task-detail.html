@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务管理平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/js/CommonUtil.js}"></script>
+    <script th:src="@{../static/js/kconfig.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+    <script th:src="@{../static/layui/js/xadmin.js}" charset="utf-8"></script>
+
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]--></head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <input type="hidden" id="id" name="id"/>
+            <div class="layui-form-item">
+                <label for="jobClass" class="layui-form-label">
+                    <span class="x-red">*</span>任务类名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="jobClass" name="jobClass" required="" lay-verify="required|jobClassCheck"
+                           autocomplete="off" class="layui-input"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="jobMethod" class="layui-form-label">
+                    <span class="x-red">*</span>任务方法</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="jobMethod" name="jobMethod" required="" lay-verify="required|jobMethodCheck"
+                           autocomplete="off"
+                           class="layui-input"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="jobArguments" class="layui-form-label">
+                    任务参数</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="jobArguments" name="jobArguments"
+                           autocomplete="off" lay-verify="jobArgumentsCheck"
+                           class="layui-input"></div>
+            </div>
+
+
+            <div class="layui-form-item">
+
+                <label for="jobGroup" class="layui-form-label">
+                    <span class="x-red">*</span>任务组</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="jobGroup" name="jobGroup" required="" lay-verify="required|jobGroupCheck"
+                           autocomplete="off" class="layui-input"></div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label for="jobName" class="layui-form-label">
+                    <span class="x-red">*</span>任务名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="jobName" name="jobName" required="" lay-verify="required|jobNameCheck"
+                           autocomplete="off"
+                           class="layui-input"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="cronExpression" class="layui-form-label">
+                    <span class="x-red">*</span>时间表达式</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="cronExpression" name="cronExpression" required=""
+                           lay-verify="required|cronExpressionCheck"
+                           autocomplete="off"
+                           class="layui-input"></div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label for="description" class="layui-form-label">任务描述</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入内容" id="description" name="description" lay-verify="descriptionCheck"
+                              class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="updateTask" class="layui-form-label"></label>
+                <button class="layui-btn" id="updateTask" lay-filter="updateTask" style="width:15%;" lay-submit=""
+                        type="submit">保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'layer'],
+        function () {
+            const $ = layui.jquery;
+            const form = layui.form;
+            const layer = layui.layer;
+            const reqParams = RequestParameter();
+            if (null == reqParams) {
+                history.back();
+            }
+            const taskId = reqParams['id'];
+            if (null == taskId) {
+                history.back();
+            }
+            AjaxRequest.aPost(api.job.detail, JSON.stringify({id: taskId}), function (r) {
+                if (r.code === 0) {
+                    const data = r.data;
+                    $("#id").val(data.id);
+                    $("#jobClass").val(data.jobClass);
+                    $("#jobMethod").val(data.jobMethod);
+                    $("#jobArguments").val(data.jobArguments);
+                    $("#jobGroup").val(data.jobGroup);
+                    $("#jobName").val(data.jobName);
+                    $("#cronExpression").val(data.cronExpression);
+                    $("#description").val(data.description);
+                } else {
+                    ResponseMsg.errorMsg('获取详情失败，请重试。');
+                }
+            });
+
+            //监听提交
+            form.on('submit(updateTask)', function (data) {
+                AjaxRequest.aPost(api.job.update, JSON.stringify(data.field), function (r) {
+                    if (r.code === 0) {
+                        // 登入成功的提示与跳转
+                        layer.msg('修改成功', {
+                            offset: '15px', icon: 1, time: 500
+                        }, function () {
+                            // 获得frame索引
+                            const index = parent.layer.getFrameIndex(window.name);
+                            //关闭当前frame
+                            parent.layer.close(index);
+                            //刷新父级页面的表格
+                            window.parent.location.reload();
+                        });
+                    } else {
+                        if (r.msg !== null && r.msg !== '') {
+                            ResponseMsg.errorMsg('修改失败，' + r.msg);
+                        } else {
+                            ResponseMsg.errorMsg('修改失败，请重试。');
+                        }
+                    }
+                });
+                return false;
+            });
+
+            //参数校验
+            form.verify({
+                //value：表单的值、item：表单的DOM对象
+                jobClassCheck: function (value, item) {
+                    if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                        return '任务类名里不能有特殊字符';
+                    }
+                    if (/^\d+\d+\d$/.test(value)) {
+                        return '任务类名不能全为数字';
+                    }
+                    if (value.length > 60) {
+                        return '任务类名长度超过 60 位';
+                    }
+                },
+                jobMethodCheck: function (value, item) {
+                    if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                        return '任务方法里不能有特殊字符';
+                    }
+                    if (/^\d+\d+\d$/.test(value)) {
+                        return '任务方法不能全为数字';
+                    }
+                    if (value.length > 60) {
+                        return '任务方法长度超过 60 位';
+                    }
+                },
+                jobArgumentsCheck: function (value, item) {
+                    if (value.length > 1024) {
+                        return '任务参数长度超过 1024 位';
+                    }
+                },
+                jobGroupCheck: function (value, item) {
+                    if (value.length > 60) {
+                        return '任务组长度超过 60 位';
+                    }
+                },
+                jobNameCheck: function (value, item) {
+                    if (value.length > 60) {
+                        return '任务名称长度超过 60 位';
+                    }
+                },
+                cronExpressionCheck: function (value, item) {
+                    if (value.length > 60) {
+                        return '时间表达式长度超过 60 位';
+                    }
+                },
+                descriptionCheck: function (value, item) {
+                    if (value.length > 60) {
+                        return '描述长度超过 60 位';
+                    }
+                }
+            });
+        });
+</script>
+</body>
+</html>

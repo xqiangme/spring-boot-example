@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.admin.dao.mapper.ScheduledQuartzJobMapper">
+
+    <resultMap type="com.example.admin.dao.bean.ScheduledQuartzJobInfo" id="BaseResultMap">
+        <result property="id" column="id"/>
+        <result property="projectKey" column="project"/>
+        <result property="jobClass" column="job_class"/>
+        <result property="jobMethod" column="job_method"/>
+        <result property="jobArguments" column="job_arguments"/>
+        <result property="jobGroup" column="job_group"/>
+        <result property="jobName" column="job_name"/>
+        <result property="jobStatus" column="job_status"/>
+        <result property="cronExpression" column="cron_expression"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createName" column="create_name"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateName" column="update_name"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="ScheduledQuartzJob_All_Columns">
+        id, project_key, job_class, job_method, job_arguments,
+        job_group, job_name, job_status, cron_expression,
+        description, create_time, update_time,create_by,create_name,update_by,update_name,del_flag
+    </sql>
+
+    <insert id="addByJob" parameterType="com.example.admin.dao.bean.ScheduledQuartzJobInfo">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO scheduled_quartz_job
+        (
+        project_key,
+        job_class,
+        job_method,
+        job_arguments,
+        job_group,
+        job_name,
+        job_status,
+        cron_expression,
+        description,
+        create_by,
+        create_name,
+        update_by,
+        update_name
+        )
+        VALUES
+        (
+        #{projectKey,jdbcType=VARCHAR},
+        #{jobClass,jdbcType=VARCHAR},
+        #{jobMethod,jdbcType=VARCHAR},
+        #{jobArguments,jdbcType=VARCHAR},
+        #{jobGroup,jdbcType=VARCHAR},
+        #{jobName,jdbcType=VARCHAR},
+        #{jobStatus,jdbcType=TINYINT},
+        #{cronExpression,jdbcType=VARCHAR},
+        #{description,jdbcType=VARCHAR},
+        #{createBy,jdbcType=VARCHAR},
+        #{createName,jdbcType=VARCHAR},
+        #{updateBy,jdbcType=VARCHAR},
+        #{updateName,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateByProjectAndId" parameterType="com.example.admin.dao.bean.ScheduledQuartzJobInfo">
+        UPDATE scheduled_quartz_job
+        <set>
+            <if test="jobClass!=null">
+                job_class=#{jobClass,jdbcType=VARCHAR},
+            </if>
+            <if test="jobMethod!=null">
+                job_method=#{jobMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="jobArguments!=null">
+                job_arguments=#{jobArguments,jdbcType=VARCHAR},
+            </if>
+            <if test="jobGroup!=null">
+                job_group=#{jobGroup,jdbcType=VARCHAR},
+            </if>
+            <if test="jobName!=null">
+                job_name=#{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobStatus!=null">
+                job_status=#{jobStatus,jdbcType=TINYINT},
+            </if>
+            <if test="cronExpression!=null">
+                cron_expression=#{cronExpression,jdbcType=VARCHAR},
+            </if>
+            <if test="description!=null">
+                description=#{description,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy!=null">
+                update_by=#{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateName!=null">
+                update_name=#{updateName,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag!=null">
+                del_flag=#{delFlag,jdbcType=TINYINT},
+            </if>
+        </set>
+        WHERE project_key=#{projectKey,jdbcType=VARCHAR} AND id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="removeByProjectAndId">
+        UPDATE scheduled_quartz_job
+        SET del_flag = 1,
+        update_by=#{updateBy,jdbcType=VARCHAR},
+        update_name=#{updateName,jdbcType=VARCHAR}
+        WHERE project_key=#{projectKey,jdbcType=VARCHAR} AND id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="getJobById" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="ScheduledQuartzJob_All_Columns"/>
+        FROM scheduled_quartz_job
+        WHERE id=#{id,jdbcType=INTEGER}
+        LIMIT 1
+    </select>
+
+    <select id="getJobByProjectAndId" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="ScheduledQuartzJob_All_Columns"/>
+        FROM scheduled_quartz_job
+        WHERE del_flag=0 AND project_key=#{projectKey,jdbcType=VARCHAR} AND id=#{id,jdbcType=INTEGER}
+        LIMIT 1
+    </select>
+
+    <select id="countByCondition" parameterType="com.example.admin.dao.dto.JobTaskPageQueryDTO"
+            resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM scheduled_quartz_job
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        <if test="jobStatus !=null and jobStatus!= -1">
+            AND job_status =#{jobStatus,jdbcType=TINYINT}
+        </if>
+        <if test="jobNameLike != null and jobNameLike !='' ">
+            AND job_name LIKE CONCAT(#{jobNameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="jobMethodLike != null and jobMethodLike !='' ">
+            AND job_method LIKE CONCAT(#{jobMethodLike,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <select id="listPageByCondition" parameterType="com.example.admin.dao.dto.JobTaskPageQueryDTO"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="ScheduledQuartzJob_All_Columns"/>
+        FROM scheduled_quartz_job
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        <if test="jobStatus !=null and jobStatus!= -1">
+            AND job_status =#{jobStatus,jdbcType=TINYINT}
+        </if>
+        <if test="jobNameLike != null and jobNameLike !='' ">
+            AND job_name LIKE CONCAT(#{jobNameLike,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="jobMethodLike != null and jobMethodLike !='' ">
+            AND job_method LIKE CONCAT(#{jobMethodLike,jdbcType=VARCHAR},'%')
+        </if>
+        LIMIT #{limit},#{pageSize}
+    </select>
+
+    <select id="getJobListByProjectAndStatus" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="ScheduledQuartzJob_All_Columns"/>
+        FROM scheduled_quartz_job
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        AND job_status =#{jobStatus,jdbcType=TINYINT}
+    </select>
+
+    <select id="getJobListByProjectGroupAndName" parameterType="java.util.Map"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="ScheduledQuartzJob_All_Columns"/>
+        FROM scheduled_quartz_job
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        AND job_group=#{jobGroup,jdbcType=VARCHAR}
+        AND job_name=#{jobName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="countByProjectGroupAndName" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM scheduled_quartz_job
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        AND job_group=#{jobGroup,jdbcType=VARCHAR}
+        AND job_name=#{jobName,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="countByProjectGroupAndNameExclude" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM scheduled_quartz_job
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        AND job_group=#{jobGroup,jdbcType=VARCHAR}
+        AND job_name=#{jobName,jdbcType=VARCHAR}
+        AND id!=#{excludeJobId,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByProjectAndStatus" parameterType="com.example.admin.dao.dto.JobUserPageQueryDTO"
+            resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM scheduled_quartz_job
+        WHERE del_flag=0
+        AND project_key=#{projectKey,jdbcType=VARCHAR}
+        <if test="jobStatus !=null and jobStatus!= -1">
+            AND job_status=#{jobStatus,jdbcType=INTEGER}
+        </if>
+    </select>
+</mapper>

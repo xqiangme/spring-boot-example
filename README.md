@@ -25,7 +25,7 @@ spring boot 相关实例
 | [spring-boot-scheduled-task](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-scheduled-task) | 可调度定时任务简单实现 |
 | [spring-boot-shiro](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-shiro) | 整合Shiro登录 |
 | [spring-boot-thymeleaf](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-thymeleaf) | 模板引擎thymeleaf |
-| [spring-boot-validation](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-validation) | 整合主键式参数校验 |
+| [spring-boot-validation](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-validation) | 整合注解式参数校验 |
 |  |  |
 |  |  |
 

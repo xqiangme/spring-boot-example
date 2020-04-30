@@ -1,6 +1,7 @@
 package com.example.redis.cache.aspect;
 
 import com.example.redis.cache.CacheContext;
+import com.example.redis.cache.CacheRedisUtil;
 import com.example.redis.cache.SerializableUtil;
 import com.example.redis.cache.annotation.CacheData;
 import com.example.redis.cache.annotation.IgnoreCache;
@@ -14,7 +15,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.annotation.Resource;
@@ -22,9 +22,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 
+/**
+ * 统一缓存自定义注解拦截实现
+ *
+ * @author mengq
+ */
 @Aspect
 @Component
 public class CacheAspect {
@@ -33,10 +39,9 @@ public class CacheAspect {
     private static final String EMPTY = "";
     private static final String POINT = ".";
 
-    private ReentrantLock lock = new ReentrantLock();
     @Resource
     private JedisPool jedisPool;
-
+    private Lock lock = new ReentrantLock();
 
     /**
      * 拦截添加缓存注解的方法
@@ -71,44 +76,42 @@ public class CacheAspect {
             return pjpParam.proceed(pjpParam.getArgs());
         }
 
-        //获取jedis客户端连接
-        Jedis jedis = jedisPool.getResource();
         Object value = null;
-        //缓存中读取
-        byte[] cacheByteValue = jedis.get(cacheKey);
+        //缓存中读取值
+        byte[] cacheByteValue = CacheRedisUtil.get(jedisPool, cacheKey);
         if (null != cacheByteValue && cacheByteValue.length > 0) {
             //反序列化对象
             value = SerializableUtil.deserialize(cacheByteValue);
         }
-        //缓存中存在直接返回
-        if (!ObjectUtils.isEmpty(value) && cacheKey.equals(value)) {
+
+        //缓存中存在并且不为空-直接返回
+        if (!ObjectUtils.isEmpty(value) && !new String(cacheKey).equals(value)) {
             log.info("[ CacheAspect ] >> cacheKey:" + new String(cacheKey) + ",class:" + className + ",method:" + methodName + " first get data from cache ");
             return value;
         }
-        //如果设置了存储null值，并且key存在 > 则直接返回 null
-        if (cacheData.storageNullFlag() && jedis.exists(cacheKey)) {
+        //如果设置了允许存储null值，若缓存key存在，并且value与自定义key相同 > 则直接返回 null
+        if (cacheData.storageNullFlag() && CacheRedisUtil.exists(jedisPool, cacheKey)) {
             log.info("[ CacheAspect ] >> cacheKey:" + new String(cacheKey) + ",class:" + className + ",method:" + methodName + " first get data from cache  is null ");
             return null;
         }
 
-        //若缓存中不存在
+        //若缓存中不存在 > 则执行方法，并重入缓存
         //加锁防止大量穿透
         lock.lock();
         try {
             //二次尝试从缓存中读取
-            //byte[] cacheByteValueSecond = this.getFromRedis(cacheKey);
-            byte[] cacheByteValueSecond = jedis.get(cacheKey);
+            byte[] cacheByteValueSecond = CacheRedisUtil.get(jedisPool, cacheKey);
             if (null != cacheByteValueSecond && cacheByteValueSecond.length > 0) {
                 //反序列化对象
                 value = SerializableUtil.deserialize(cacheByteValueSecond);
             }
-            //缓存中存在直接返回
-            if (!ObjectUtils.isEmpty(value) && cacheKey.equals(value)) {
+            //缓存中存在并且不为空-直接返回
+            if (!ObjectUtils.isEmpty(value) && !new String(cacheKey).equals(value.toString())) {
                 log.info("[ CacheAspect ] >> cacheKey:" + new String(cacheKey) + ",class:" + className + ",method:" + methodName + " second get data from cache ");
                 return value;
             }
-            //如果设置了允许存储null值，并且key存在 > 则直接返回 null
-            if (cacheData.storageNullFlag() && jedis.exists(cacheKey)) {
+            //如果设置了允许存储null值，若缓存key存在，并且value与自定义key相同 > 则直接返回 null
+            if (cacheData.storageNullFlag() && CacheRedisUtil.exists(jedisPool, cacheKey)) {
                 log.info("[ CacheAspect ] >> cacheKey:" + new String(cacheKey) + ",class:" + className + ",method:" + methodName + " second get data from cache  is null ");
                 return null;
             }
@@ -117,30 +120,24 @@ public class CacheAspect {
             value = pjpParam.proceed(pjpParam.getArgs());
 
             //返回值不为空-存入缓存并返回
-            if (null != value) {
-                //setToRedis(cacheKey, value, getExpireTime(cacheData));
-                jedis.setex(cacheKey, getExpireTime(cacheData), SerializableUtil.serialize(value));
-
+            if (!ObjectUtils.isEmpty(value)) {
+                //存入缓存
+                CacheRedisUtil.set(jedisPool, cacheKey, this.getExpireTime(cacheData), SerializableUtil.serialize(value));
                 return value;
             }
 
-            //返回值不为空-是否需要存储空对象
+            //返回值为空-是否设置需要存储空对象
             if (cacheData.storageNullFlag()) {
-                //存入缓存,value-也存储key
-                //setToRedis(cacheKey, cacheKey, getExpireTime(cacheData));
-                jedis.setex(cacheKey, getExpireTime(cacheData), SerializableUtil.serialize(value));
-                return null;
+                //存入缓存,value也存储key
+                CacheRedisUtil.set(jedisPool, cacheKey, this.getExpireTime(cacheData), SerializableUtil.serialize(new String(cacheKey)));
+                return value;
             }
+            return value;
         } finally {
             //解锁
             lock.unlock();
-            //关闭
-            if (jedis.isConnected()) {
-                jedis.close();
-                log.info("[ CacheAspect ] >> cacheKey:" + new String(cacheKey) + ",class:" + className + ",method:" + methodName + " close jedis client ");
-            }
+            log.info("[ CacheAspect ] >> cacheKey:" + new String(cacheKey) + ",class:" + className + ",method:" + methodName + " close jedis end ");
         }
-        return null;
     }
 
     /**
@@ -160,6 +157,7 @@ public class CacheAspect {
         }
         //方法全路径（类名+方法名）
         String methodPath = className + POINT + methodName;
+        //若方法参数为空
         if (pjpParam.getArgs() == null || pjpParam.getArgs().length == 0) {
             return keyPrefix + POINT + DigestUtils.md5Hex(methodPath);
         }
@@ -191,85 +189,18 @@ public class CacheAspect {
         return keyPrefix + POINT + DigestUtils.md5Hex(methodPath + paramKey);
     }
 
-
     /**
-     * 计算过期时间 如果缓存设置了需要延迟失效，取设置的延迟时间1-2倍之间的一个随机值作为真正的延迟时间值
+     * 计算过期时间 如果缓存设置了需要延迟失效，
+     * 取设置的延迟时间1-2倍之间的一个随机值作为真正的延迟时间值
      */
     private int getExpireTime(CacheData cacheData) {
         int expire = cacheData.expireTime();
 
         if (expire == 0) {
-            expire = (int) (60 * 60 * 24 - ((System.currentTimeMillis() / 1000 + 8 * 3600) % (60 * 60
-                    * 24)));
+            expire = (int) (60 * 60 * 24 - ((System.currentTimeMillis() / 1000 + 8 * 3600) % (60 * 60 * 24)));
         }
-
         int offset = 0;
         return expire + offset;
     }
-    
-
-//    protected void setToRedis(byte[] key, Object value, int expire) {
-//        if (expire == 0) {
-//            expire = (int) (60 * 60 * 24 - ((System.currentTimeMillis() / 1000 + 8 * 3600) % (60 * 60 * 24)));
-//        }
-//
-//        Jedis jedis = null;
-//        try {
-//            jedis = jedisPool.getResource();
-//            String setex = jedis.setex(key, expire, SerializableUtil.serialize(value));
-//            System.out.println(setex);
-//        } catch (Exception e) {
-//
-//        } finally {
-//            try {
-//                if (jedis != null) {
-//                    if (jedis.isConnected()) {
-//                        jedis.close();
-//                    }
-//                }
-//            } catch (Exception e) {
-//            }
-//        }
-//    }
-
-//    protected byte[] getFromRedis(byte[] key) {
-//        if (key == null) {
-//            return null;
-//        }
-//        Jedis jedis = null;
-//        try {
-//            jedis = jedisPool.getResource();
-//            return jedis.get(key);
-//        } catch (Exception e) {
-//            // LOGGER.error("[Redis-invoke] Exception {} - {}", ex.getMessage(), ex);
-//        } finally {
-//            if (jedis != null) {
-//                if (jedis.isConnected()) {
-//                    jedis.close();
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
-//    protected Boolean exists(byte[] key) {
-//        if (key == null) {
-//            return false;
-//        }
-//        Jedis jedis = null;
-//        try {
-//            jedis = jedisPool.getResource();
-//            return jedis.exists(key);
-//        } catch (Exception e) {
-//
-//        } finally {
-//            if (jedis != null) {
-//                if (jedis.isConnected()) {
-//                    jedis.close();
-//                }
-//            }
-//        }
-//        return false;
-//    }
 
 }

@@ -1,7 +1,3 @@
-/**
- * haifenbb.com
- * Copyright (C) 2019-2020 All Rights Reserved.
- */
 package com.example.demo.controller;
 
 import com.example.demo.bean.UserInfo;
@@ -22,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author mengq
  */
 @RestController
+@RequestMapping("/cache-user")
 public class CacheTestController {
 
     @Autowired

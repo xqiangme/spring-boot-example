@@ -76,25 +76,6 @@ public class UserCacheBaseServiceImpl implements UserCacheBaseService {
         return MOCK_USER_MAP.get(id);
     }
 
-//    /**
-//     * 根据用户ID查询
-//     *
-//     * @param id
-//     */
-//    @Override
-//    @CacheData(expireTime = 20 * 60)
-//    public UserInfo getUserById(Integer id) {
-//        log.info("UserServiceImpl >> getUserById id:{}", id);
-//        if (null == id) {
-//            return null;
-//        }
-//        UserInfo userInfo=new UserInfo();
-//        userInfo.setId(1001);
-//        userInfo.setRealName("程序员小强");
-//        userInfo.setUserName("xiaoQiang");
-//        return userInfo;
-//    }
-
     /**
      * 根据用户ID和状态查询
      *
@@ -227,7 +208,6 @@ public class UserCacheBaseServiceImpl implements UserCacheBaseService {
         listQueryBo.setStatus(queryBO.getStatus());
         return this.listPageUserByObjParam(listQueryBo);
     }
-
 
     private void sleep(long millis) {
         try {

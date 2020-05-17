@@ -1,5 +1,5 @@
 # spring-boot-example
-spring boot 相关实例
+spring boot 相关实例，不断更新，欢迎点亮
 
 
 
@@ -7,7 +7,7 @@ spring boot 相关实例
 | --- | --- |
 | [Spring-boot-Apollo](https://github.com/mengq0815/spring-boot-example/tree/master/Spring-boot-Apollo) | 整合Apollo应用配置中心 |
 | [spring-boot-Aspect-aop](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-Aspect-aop) | Aop |
-| [spring-boot-api-cache](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-api-cache) | 基于切面与redis实现统计方法缓存 |
+| [spring-boot-api-cache](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-api-cache) | 基于切面与redis实现统一方法缓存 |
 | [spring-boot-dubbo](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-dubbo) | 整合Dubbo |
 | [spring-boot-elasticsearch](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-elasticsearch) | 整合elasticsearch |
 | [spring-boot-helloWorld](https://github.com/mengq0815/spring-boot-example/tree/master/spring-boot-helloWorld) |  |

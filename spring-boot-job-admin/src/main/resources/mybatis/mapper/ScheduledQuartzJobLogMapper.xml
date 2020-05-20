@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.example.admin.dao.mapper.ScheduledQuartzJobLogMapper">
+<mapper namespace="com.job.admin.dao.mapper.ScheduledQuartzJobLogMapper">
 
-    <resultMap id="BaseResultMap" type="com.example.admin.dao.bean.ScheduledQuartzJobLogInfo">
+    <resultMap id="BaseResultMap" type="com.job.admin.dao.bean.ScheduledQuartzJobLogInfo">
         <id column="id" property="id" jdbcType="INTEGER" javaType="Integer"/>
         <result column="project_key" property="projectKey" jdbcType="VARCHAR" javaType="String"/>
         <result column="content" property="content" jdbcType="VARCHAR" javaType="String"/>
         <result column="log_desc" property="logDesc" jdbcType="VARCHAR" javaType="String"/>
         <result column="remarks" property="remarks" jdbcType="VARCHAR" javaType="String"/>
+        <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" javaType="String"/>
         <result column="operate_id" property="operateId" jdbcType="VARCHAR" javaType="String"/>
         <result column="operate_name" property="operateName" jdbcType="VARCHAR" javaType="String"/>
         <result column="job_id" property="jobId" jdbcType="INTEGER" javaType="Integer"/>
@@ -16,10 +17,11 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
     </resultMap>
 
-    <resultMap id="PageListResultMap" type="com.example.admin.web.param.vo.ScheduledQuartzJobLogItemVO">
+    <resultMap id="PageListResultMap" type="com.job.admin.web.param.vo.ScheduledQuartzJobLogItemVO">
         <id column="id" property="id" jdbcType="INTEGER" javaType="Integer"/>
         <result column="log_desc" property="logDesc" jdbcType="VARCHAR" javaType="String"/>
         <result column="remarks" property="remarks" jdbcType="VARCHAR" javaType="String"/>
+        <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" javaType="String"/>
         <result column="operate_id" property="operateId" jdbcType="VARCHAR" javaType="String"/>
         <result column="operate_name" property="operateName" jdbcType="VARCHAR" javaType="String"/>
         <result column="job_id" property="jobId" jdbcType="INTEGER" javaType="Integer"/>
@@ -31,7 +33,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,project_key,content,log_desc,remarks,operate_id
+        id,project_key,content,log_desc,remarks,ip_address,operate_id
         ,operate_name,job_id,log_type,create_time,update_time
     </sql>
 
@@ -47,6 +49,7 @@
         log_type,
         log_desc,
         content,
+        ip_address,
         operate_id,
         operate_name,
         remarks
@@ -58,6 +61,7 @@
         #{logType,jdbcType=TINYINT},
         #{logDesc,jdbcType=VARCHAR},
         #{content,jdbcType=VARCHAR},
+        #{ipAddress,jdbcType=VARCHAR},
         #{operateId,jdbcType=VARCHAR},
         #{operateName,jdbcType=VARCHAR},
         #{remarks,jdbcType=VARCHAR}
@@ -80,7 +84,7 @@
         job_id = #{jobId,jdbcType=INTEGER}
     </select>
 
-    <select id="countByCondition" parameterType="com.example.admin.dao.dto.JobTaskLogPageQueryDTO"
+    <select id="countByCondition" parameterType="com.job.admin.dao.dto.JobTaskLogPageQueryDTO"
             resultType="java.lang.Integer">
         SELECT
         COUNT(1)
@@ -114,7 +118,7 @@
         </if>
     </select>
 
-    <select id="listPageByCondition" parameterType="com.example.admin.dao.dto.JobTaskLogPageQueryDTO"
+    <select id="listPageByCondition" parameterType="com.job.admin.dao.dto.JobTaskLogPageQueryDTO"
             resultMap="PageListResultMap">
         SELECT
         a.id,

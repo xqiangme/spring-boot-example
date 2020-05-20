@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>定时任务管理平台</title>
+    <title>任务统一调度平台</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -17,7 +17,6 @@
     <script th:src="@{../static/js/kconfig.js}"></script>
     <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
     <script th:src="@{../static/layui/js/xadmin.js}" charset="utf-8"></script>
-
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
@@ -45,8 +44,8 @@
                         <div class="layui-inline layui-show-xs-block">
                             <select name="jobStatus" id="jobStatus" lay-verify="">
                                 <option value="-1" selected>请选择任务状态</option>
-                                <option value="0">已启用</option>
-                                <option value="1">已停止</option>
+                                <option value="1">已启用</option>
+                                <option value="2">已停止</option>
                             </select>
                         </div>
                         <div class="layui-inline layui-show-xs-block">
@@ -88,18 +87,22 @@
                 page: 1, //页码的参数名称，默认：page
                 limit: 10//每页数据量的参数名，默认：limit
             }
-            , cols: [[ //表头
-                {field: 'id', title: '任务ID', width: 100, fixed: 'left'},
-                {field: 'jobClass', title: '任务类',},
-                {field: 'jobMethod', title: '任务方法'},
-                {field: 'jobArguments', title: '任务参数'},
-                {field: 'jobGroup', title: '任务组'},
-                {field: 'jobName', title: '任务名称'},
-                {field: 'jobStatus', title: '任务状态', templet: statusTpl},
-                {field: 'cronExpression', title: '任务调度参数'},
-                {field: 'description', title: '任务描述'},
-                {field: '', title: '操作', width: 75, templet: '#currentTableBar'}
-            ]],
+            , cols: [
+                [ //表头
+                    {field: 'id', title: '任务ID', width: 100, fixed: 'left'},
+                    {field: 'jobClass', title: '任务类', width: 160},
+                    {field: 'jobMethod', title: '任务方法', width: 160},
+                    {field: 'jobArguments', title: '任务参数', width: 150},
+                    {field: 'jobGroup', title: '任务组', width: 85},
+                    {field: 'jobName', title: '任务名称', width: 160},
+                    {field: 'jobStatus', title: '任务状态', width: 105, templet: statusTpl},
+                    {field: 'cronExpression', title: '时间表达式', width: 180},
+                    {field: 'description', title: '任务描述', width: 135},
+                    {field: 'createTime', width: 150, title: '创建时间'},
+                    {field: 'updateTime', width: 150, title: '更新时间'},
+                    {field: '', title: '操作', fixed: 'right', width: 100, templet: '#currentTableBar'}
+                ]
+            ],
             limits: [10, 20, 30, 50, 100],
             limit: 10
         });
@@ -143,6 +146,8 @@
                             }
                         });
                     });
+                } else if (obj.event === 'copy') {
+                    xadmin.open('新增任务', api.job.addHtml + '?id=' + data.id, 800, 600);
                 }
             }
         );
@@ -219,7 +224,7 @@
     //是否启用模板
     const statusTpl = function (d) {
         let isChecked = "";
-        if (d.jobStatus === 0) {
+        if (d.jobStatus === 1) {
             isChecked = "checked";
         }
         return '<input type="checkbox" lay-skin="switch" value="' + d.id + '" lay-filter="switchJobStatus" lay-text="已启动|已停止" ' + isChecked + '> ';
@@ -232,21 +237,27 @@
         if (null !== functionsKeys && '' !== functionsKeys) {
             const functionsKeysArray = functionsKeys.split(",");
             let operatePower = '';
+            let hasAddPower = false;
             for (let j = 0; j < functionsKeysArray.length; j++) {
                 //添加
                 if (functionsKeysArray[j] === 'taskAdd') {
                     $("#addTaskButton").show();
+                    hasAddPower = true;
                     continue;
                 }
                 //修改
                 if (functionsKeysArray[j] === 'taskUpdate') {
-                    operatePower = operatePower + '<a title="编辑" href="javascript:;" lay-event="edit"> <i class="layui-icon">&#xe642;</i> </a>';
+                    operatePower = operatePower + '<a title="编辑" href="javascript:;" lay-event="edit"> <i class="layui-icon">&#xe642;</i></a>';
                     continue;
                 }
                 //删除
                 if (functionsKeysArray[j] === 'taskDelete') {
                     operatePower = operatePower + '<a title="删除" href="javascript:;" lay-event="delete"><i class="layui-icon">&#xe640;</i></a>';
                 }
+            }
+            //拷贝按钮权限
+            if (hasAddPower) {
+                operatePower = operatePower + '&nbsp;<a title="拷贝" href="javascript:;" lay-event="copy"><i class="iconfont">&#xe744;</i></a>';
             }
             if ('' !== operatePower) {
                 $("#currentTableBar").html(operatePower);

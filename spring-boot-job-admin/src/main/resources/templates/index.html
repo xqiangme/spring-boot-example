@@ -1,8 +1,8 @@
 <!doctype html>
-<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="x-admin-sm">
 <head>
     <meta charset="UTF-8">
-    <title>定时任务管理平台</title>
+    <title th:text="${platformName}+'任务调度平台'"></title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -29,17 +29,21 @@
 <!-- 顶部开始 -->
 <div class="container">
     <div class="logo">
-        <a href="/index">定时任务统一管理平台</a></div>
+        <a href="/index"><span th:text="${platformName}"></span>任务调度平台</a></div>
     <div class="left_open">
         <a><i title="展开左侧栏" class="iconfont">&#xe699;</i></a>
     </div>
     <ul class="layui-nav right" lay-filter="">
         <li class="layui-nav-item">
             <a href="javascript:;" id="currentUserRealName"></a>
+            <a href="javascript:;"></a>
             <dl class="layui-nav-child">
                 <!-- 二级菜单 -->
                 <dd>
-                    <a onclick="xadmin.open('个人信息','/user-person',500, 400,true)">个人信息</a></dd>
+                    <!--
+                                        <a onclick="xadmin.open('个人信息',api.user.user_person_html,300, 300,true)">个人信息</a></dd>
+                    -->
+                    <a href="javascript:;" id="userPersonalDetail">个人信息</a></dd>
                 <dd>
                     <a href="javascript:;" id="loginOut">退出</a></dd>
             </dl>
@@ -68,7 +72,7 @@
         </div>
         <div class="layui-tab-content" lay-filter="demo">
             <div class="layui-tab-item layui-show">
-                <iframe src='/home' frameborder="0" scrolling="yes" tab-id="firstHomeIframe" class="x-iframe"
+                <iframe src='/page/home' frameborder="0" scrolling="yes" tab-id="firstHomeIframe" class="x-iframe"
                         id="homeIframe"></iframe>
             </div>
         </div>
@@ -85,40 +89,37 @@
             const $ = layui.jquery;
             const layer = layui.layer;
             const element = layui.element;
-
             const realName = getValueByCookie("COOKIE_USER_INFO", "realName");
             const menuKeys = getValueByCookie("COOKIE_USER_INFO", "menus");
-            $("#currentUserRealName").html(realName);
+            $("#currentUserRealName").text(realName);
             if (null !== menuKeys && '' !== menuKeys) {
                 const menuKeysArray = menuKeys.split(",");
                 for (let j = 0; j < menuKeysArray.length; j++) {
                     //用户管理
                     if (menuKeysArray[j] === 'userManger') {
-                        $("#nav").append(' <li><a href="javascript:;" layadmin-event="refresh" onclick="xadmin.add_tab(\'人员管理\',\'user-list\',true)">' +
+                        $("#nav").append(' <li><a href="javascript:;" layadmin-event="refresh" onclick="xadmin.add_tab(\'人员管理\',\'/page/user-list\',true)">' +
                             '<i class="iconfont left-nav-li" lay-tips="人员管理">&#xe6b8;</i><cite>人员管理</cite></a>\</li>')
                         continue;
                     }
                     //任务管理
                     if (menuKeysArray[j] === 'taskManger') {
-                        $("#nav").append('<li><a href="javascript:;" onclick="xadmin.add_tab(\'任务管理\',\'task-list\',true)">' +
+                        $("#nav").append('<li><a href="javascript:;" onclick="xadmin.add_tab(\'任务管理\',\'/page/task-list\',true)">' +
                             '<i class="iconfont left-nav-li" lay-tips="任务管理">&#xe723;</i><cite>任务管理</cite></a></li>')
                         continue;
                     }
                     //日志管理
                     if (menuKeysArray[j] === 'taskLogManger') {
-                        $("#nav").append('<li> <a href="javascript:;" onclick="xadmin.add_tab(\'操作日志\',\'task-log-list\',true)"> ' +
+                        $("#nav").append('<li> <a href="javascript:;" onclick="xadmin.add_tab(\'操作日志\',\'/page/task-log-list\',true)"> ' +
                             '<i class="iconfont left-nav-li" lay-tips="操作日志">&#xe6ce;</i><cite>操作日志</cite></a></li>')
                     }
                 }
             }
 
-
             element.on('tab(demo)', function (data) {
-                console.log("1122222" + data);
+                //console.log("1122222" + data);
                 var src = $(".layui-tab-item.layui-show").find("iframe").attr("src");
                 $(".layui-tab-item.layui-show").find("iframe").attr("src", src);
             });
-
 
             //登出
             $("#loginOut").click(function () {
@@ -137,6 +138,17 @@
                             ResponseMsg.errorMsg('退出失败，请重试。');
                         }
                     }
+                });
+            });
+
+            $("#userPersonalDetail").click(function () {
+                layer.open({
+                    type: 2
+                    , title: '个人信息'
+                    , area: ['500px', '400px']
+                    , shade: 0
+                    , maxmin: true
+                    , content: api.user.user_person_html
                 });
             });
 

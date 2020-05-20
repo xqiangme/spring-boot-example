@@ -2,7 +2,7 @@
 <html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>定时任务管理平台</title>
+    <title>任务统一调度平台</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -50,6 +50,14 @@
                         <tr>
                             <th><strong>操作时间</strong></th>
                             <td id="createTime"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>操作IP</strong></th>
+                            <td id="ipAddress"></td>
+                        </tr>
+                        <tr>
+                            <th><strong>备注</strong></th>
+                            <td id="remarks"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -154,8 +162,6 @@
 
     </div>
 </div>
-</div>
-</div>
 </body>
 <script>
     layui.use(['form', 'layer'],
@@ -180,7 +186,9 @@
                     $("#realName").html(data.realName);
                     $("#operateId").html(data.operateId);
                     $("#operateName").html(data.operateName);
-                    $("#createTime").html(data.createTimeStr);
+                    $("#createTime").html(data.createTime);
+                    $("#ipAddress").html(data.ipAddress);
+                    $("#remarks").html(data.remarks);
                     if (data.jobId !== null && null !== data.content && '' !== data.content) {
                         const content = data.content;
                         const jobJson = JSON.parse(content);

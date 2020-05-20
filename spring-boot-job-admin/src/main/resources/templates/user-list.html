@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>定时任务管理平台</title>
+    <title>任务统一调度平台</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -50,10 +50,11 @@
                             </select>
                         </div>
                         <div class="layui-inline layui-show-xs-block">
-                            <select name="adminFlag" id="adminFlag" lay-verify="">
-                                <option value="-1" selected>请选择是否管理员</option>
-                                <option value="0">否</option>
-                                <option value="1">是</option>
+                            <select name="userType" id="userType" lay-verify="">
+                                <option value="-1" selected>请选择用户类型</option>
+                                <option value="3">普通用户</option>
+                                <option value="2">管理员</option>
+                                <option value="1">超级管理员</option>
                             </select>
                         </div>
                         <div class="layui-inline layui-show-xs-block">
@@ -63,7 +64,7 @@
                 </div>
                 <div class="layui-card-header">
                     <button class="layui-btn" style="display: none" id="addUserButton"
-                            onclick="xadmin.open('添加用户','/user-add',800,600)"><i
+                            onclick="xadmin.open('添加用户',api.user.add_user_html,800,600)"><i
                             class="layui-icon"></i>添加
                     </button>
                 </div>
@@ -94,29 +95,21 @@
                 page: 1, //页码的参数名称，默认：page
                 limit: 10//每页数据量的参数名，默认：limit
             }
-            , cols: [[ //表头
-                {field: 'id', title: '用户ID', width: 120, fixed: 'left'},
-                {field: 'username', title: '用户名', width: 120},
-                {field: 'realName', title: '真实姓名', width: 100},
-                {field: 'userStatus', title: '状态', width: 90, templet: statusTpl},
-                {field: 'adminFlag', title: '是否管理员', width: 100, templet: adminFlagTpl},
-                {field: 'createName', title: '创建者', width: 100},
-                {field: 'updateName', title: '更新者', width: 100},
-                {
-                    field: 'createTime',
-                    width: 150,
-                    title: '创建时间',
-                    templet: "<div>{{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"
-                },
-                {
-                    field: 'updateTime',
-                    width: 150,
-                    title: '更新时间',
-                    templet: "<div>{{layui.util.toDateString(d.updateTime, 'yyyy-MM-dd HH:mm:ss')}}</div>"
-                },
-                {field: 'lastLoginTime', width: 150, title: '最后登录时间'},
-                {field: '', title: '操作', width: 130, fixed: 'right', templet: '#currentTableBar'}
-            ]],
+            , cols: [
+                [
+                    {field: 'id', title: '用户ID', width: 120, fixed: 'left'},
+                    {field: 'username', title: '用户名', width: 120},
+                    {field: 'realName', title: '真实姓名', width: 100},
+                    {field: 'userStatus', title: '状态', width: 90, templet: statusTpl},
+                    {field: 'userType', title: '用户类型', width: 100, templet: userTypeTpl},
+                    {field: 'createName', title: '创建者', width: 100},
+                    {field: 'updateName', title: '更新者', width: 100},
+                    {field: 'createTime', width: 150, title: '创建时间'},
+                    {field: 'updateTime', width: 150, title: '更新时间'},
+                    {field: 'lastLoginTime', width: 150, title: '最后登录时间'},
+                    {field: '', title: '操作', width: 110, fixed: 'right', templet: '#currentTableBar'}
+                ]
+            ],
             limits: [10, 20, 30, 50, 100],
             limit: 10
         });
@@ -132,7 +125,7 @@
                     usernameLike: $("#usernameLike").val(),
                     userStatus: $("#userStatus").val(),
                     realNameLike: $("#realNameLike").val(),
-                    adminFlag: $("#adminFlag").val()
+                    userType: $("#userType").val()
                 }
             }, 'data');
 
@@ -182,13 +175,16 @@
         return '<span class="layui-btn layui-btn-normal layui-btn-mini">' + statusStr + '</span></td>';
     };
 
-    //人员状态
-    const adminFlagTpl = function (data) {
-        let adminFlagStr = "否";
-        if (data.adminFlag === 1) {
-            adminFlagStr = "是";
+    //人员类型
+    const userTypeTpl = function (data) {
+        let userTypeStr = "普通用户";
+        if (data.userType === 1) {
+            userTypeStr = "超级管理员";
         }
-        return '<span>' + adminFlagStr + '</span></td>';
+        if (data.userType === 2) {
+            userTypeStr = "管理员";
+        }
+        return '<span>' + userTypeStr + '</span></td>';
     };
 </script>
 <script>
@@ -208,22 +204,22 @@
                 }
                 //修改
                 if (functionsKeysArray[j] === 'userUpdate') {
-                    operatePower = operatePower + '<a title="编辑" href="javascript:;" lay-event="edit"><i class="layui-icon">&#xe642;</i></a>';
+                    operatePower = operatePower + '{{# if(d.loginUserTypeLevel >= d.userTypeLevel){ }} <a title="编辑" href="javascript:;" lay-event="edit"><i class="layui-icon">&#xe642;</i></a> {{#  } }}';
                     continue;
                 }
                 //修改人员密码
                 if (functionsKeysArray[j] === 'userUpdatePwd') {
-                    operatePower = operatePower + '<a title="修改密码" href="javascript:;" lay-event="editPwd"><i class="layui-icon">&#xe673;</i></a>';
+                    operatePower = operatePower + '{{# if(d.loginUserTypeLevel >= d.userTypeLevel){ }} <a title="修改密码" href="javascript:;" lay-event="editPwd"><i class="layui-icon">&#xe673;</i></a> {{#  } }}';
                     continue;
                 }
-                //修改人员权限
+                //修改人员权限(仅普通用户需要修改权限)
                 if (functionsKeysArray[j] === 'userUpdatePower') {
-                    operatePower = operatePower + '{{#  if(d.adminFlag != 1){ }} <a title="修改权限" href="javascript:;" lay-event="editPower"><i class="layui-icon">&#xe672;</i></a> {{#  } }}';
+                    operatePower = operatePower + '{{#  if(d.userType == 3){ }} <a title="修改权限" href="javascript:;" lay-event="editPower"><i class="layui-icon">&#xe672;</i></a> {{#  } }}';
                     continue;
                 }
                 //删除人员
                 if (functionsKeysArray[j] === 'userDelete') {
-                    operatePower = operatePower + '<a title="删除" href="javascript:;" lay-event="delete"> <i class="layui-icon">&#xe640;</i> </a>';
+                    operatePower = operatePower + '{{#  if(d.loginUserTypeLevel >= d.userTypeLevel ){ }} <a title="删除" href="javascript:;" lay-event="delete"><i class="layui-icon">&#xe640;</i></a> {{#  } }}';
                 }
             }
             if ('' !== operatePower) {

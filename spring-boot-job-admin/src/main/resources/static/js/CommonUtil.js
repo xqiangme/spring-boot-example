@@ -1,3 +1,16 @@
+const req = {
+    status: {
+        ok: 200,
+        fail: 400,
+        other: 333
+    },
+    type: {
+        get: 'GET',
+        post: 'POST'
+    }
+};
+
+
 const AjaxRequest = {
     /**
      * 异步post请求
@@ -116,7 +129,7 @@ const ResponseMsg = {
 function RequestParameter() {
     const url = window.location.search; //获取url中"?"符后的字串
     const theRequest = new Object();
-    if (url.indexOf("?") != -1) {
+    if (url.indexOf("?") !== -1) {
         const str = url.substr(1);
         const strs = str.split("&");
         for (let i = 0; i < strs.length; i++) {
@@ -153,4 +166,7 @@ function getCookie(name) {
     }
     return "";
 }
+
+
+
 

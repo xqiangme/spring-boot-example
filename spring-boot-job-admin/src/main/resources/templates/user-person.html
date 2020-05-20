@@ -2,7 +2,7 @@
 <html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>定时任务管理平台</title>
+    <title>任务统一调度平台</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -84,7 +84,7 @@
                     $("#lastLoginTime").html(data.lastLoginTime);
                     $("#createBy").html(data.createBy);
                     $("#createName").html(data.createName);
-                    $("#createTime").html(data.createTimeStr);
+                    $("#createTime").html(data.createTime);
                     $("#userStatus").html(data.userStatusStr);
                 } else {
                     if (r.msg !== null && r.msg !== '') {

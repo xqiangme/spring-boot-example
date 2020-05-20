@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         "http://ibatis.apache.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.admin.dao.mapper.ScheduledQuartzJobMapper">
+<mapper namespace="com.job.admin.dao.mapper.ScheduledQuartzJobMapper">
 
-    <resultMap type="com.example.admin.dao.bean.ScheduledQuartzJobInfo" id="BaseResultMap">
+    <resultMap type="com.job.admin.dao.bean.ScheduledQuartzJobInfo" id="BaseResultMap">
         <result property="id" column="id"/>
         <result property="projectKey" column="project"/>
         <result property="jobClass" column="job_class"/>
@@ -30,7 +30,7 @@
         description, create_time, update_time,create_by,create_name,update_by,update_name,del_flag
     </sql>
 
-    <insert id="addByJob" parameterType="com.example.admin.dao.bean.ScheduledQuartzJobInfo">
+    <insert id="addByJob" parameterType="com.job.admin.dao.bean.ScheduledQuartzJobInfo">
         <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
             SELECT
             LAST_INSERT_ID()
@@ -69,7 +69,7 @@
         )
     </insert>
 
-    <update id="updateByProjectAndId" parameterType="com.example.admin.dao.bean.ScheduledQuartzJobInfo">
+    <update id="updateByProjectAndId" parameterType="com.job.admin.dao.bean.ScheduledQuartzJobInfo">
         UPDATE scheduled_quartz_job
         <set>
             <if test="jobClass!=null">
@@ -135,7 +135,7 @@
         LIMIT 1
     </select>
 
-    <select id="countByCondition" parameterType="com.example.admin.dao.dto.JobTaskPageQueryDTO"
+    <select id="countByCondition" parameterType="com.job.admin.dao.dto.JobTaskPageQueryDTO"
             resultType="java.lang.Integer">
         SELECT
         COUNT(1)
@@ -153,7 +153,7 @@
         </if>
     </select>
 
-    <select id="listPageByCondition" parameterType="com.example.admin.dao.dto.JobTaskPageQueryDTO"
+    <select id="listPageByCondition" parameterType="com.job.admin.dao.dto.JobTaskPageQueryDTO"
             resultMap="BaseResultMap">
         SELECT
         <include refid="ScheduledQuartzJob_All_Columns"/>
@@ -169,6 +169,7 @@
         <if test="jobMethodLike != null and jobMethodLike !='' ">
             AND job_method LIKE CONCAT(#{jobMethodLike,jdbcType=VARCHAR},'%')
         </if>
+        ORDER BY job_status,id
         LIMIT #{limit},#{pageSize}
     </select>
 
@@ -193,29 +194,31 @@
         AND job_name=#{jobName,jdbcType=VARCHAR}
     </select>
 
-    <select id="countByProjectGroupAndName" resultType="java.lang.Integer">
+    <select id="countByProjectGroupAndMethod" resultType="java.lang.Integer">
         SELECT
         count(1)
         FROM scheduled_quartz_job
         WHERE del_flag=0
         AND project_key=#{projectKey,jdbcType=VARCHAR}
         AND job_group=#{jobGroup,jdbcType=VARCHAR}
-        AND job_name=#{jobName,jdbcType=VARCHAR}
+        AND job_class=#{jobClass,jdbcType=VARCHAR}
+        AND job_method=#{jobMethod,jdbcType=VARCHAR}
     </select>
 
 
-    <select id="countByProjectGroupAndNameExclude" resultType="java.lang.Integer">
+    <select id="countByProjectGroupAndMethodExclude" resultType="java.lang.Integer">
         SELECT
         count(1)
         FROM scheduled_quartz_job
         WHERE del_flag=0
         AND project_key=#{projectKey,jdbcType=VARCHAR}
         AND job_group=#{jobGroup,jdbcType=VARCHAR}
-        AND job_name=#{jobName,jdbcType=VARCHAR}
+        AND job_class=#{jobClass,jdbcType=VARCHAR}
+        AND job_method=#{jobMethod,jdbcType=VARCHAR}
         AND id!=#{excludeJobId,jdbcType=INTEGER}
     </select>
 
-    <select id="countByProjectAndStatus" parameterType="com.example.admin.dao.dto.JobUserPageQueryDTO"
+    <select id="countByProjectAndStatus" parameterType="com.job.admin.dao.dto.JobUserPageQueryDTO"
             resultType="java.lang.Integer">
         SELECT
         COUNT(1)

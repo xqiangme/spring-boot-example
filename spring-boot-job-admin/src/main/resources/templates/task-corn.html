@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>任务统一调度平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="icon" th:href="@{../static/layui/images/logo.png}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/font.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/login.css}">
+    <link rel="stylesheet" th:href="@{../static/layui/css/xadmin.css}">
+    <script th:src="@{../static/layui/js/jquery.min.js}"></script>
+    <script th:src="@{../static/layui/lib/layui/layui.js}" charset="utf-8"></script>
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<div class="layui-card-body ">
+    <table class="layui-table">
+        <tbody>
+        <tr>
+            <th><strong>表 达 式</strong></th>
+            <td>含义</td>
+        </tr>
+        <tr>
+            <td>0/10 * * * * ?</td>
+            <td>每隔10秒一次</td>
+        </tr>
+        <tr>
+            <td>0 0/10 * * * ?</td>
+            <td>每隔10分一次</td>
+        </tr>
+        <tr>
+            <td>0 0 10 * * ?</td>
+            <td>每日上午10点执行</td>
+        </tr>
+        <tr>
+            <td>0 0 10,14,16 * * ?</td>
+            <td>每日上午10点，下午2点和下午4点</td>
+        </tr>
+        <tr>
+            <td>0 0/30 9-17 * * ?</td>
+            <td>朝九晚五工作时间内每半小时</td>
+        </tr>
+        <tr>
+            <td>0 0 17 ? * TUES,THUR,SAT</td>
+            <td>每周二、四、六下午五点</td>
+        </tr>
+        <tr>
+            <td>0 0 9-17 ? * MON-FRI</td>
+            <td>周一至周五朝九晚五触发</td>
+        </tr>
+        <tr>
+            <td>0 0,15,30,45 * 1-10 * ?</td>
+            <td>每月前10天每隔15分钟</td>
+        </tr>
+        <tr>
+            <td>30 0 0 1 1 ? 2012</td>
+            <td>每月前10天每隔15分钟</td>
+        </tr>
+        <tr>
+            <td>0 15 10 L * ?</td>
+            <td>每月最后一日的上午10:15触发</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</html>

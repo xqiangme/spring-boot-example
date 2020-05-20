@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>定时任务管理平台</title>
+    <title>任务统一调度平台</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -34,7 +34,11 @@
                     <span class="x-red">*</span>用户名</label>
                 <div class="layui-input-inline">
                     <input type="text" id="username" name="username" required="" lay-verify="required|usernameCheck"
-                           autocomplete="off" class="layui-input"></div>
+                           autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    用户登录名最大30字符
+                </div>
             </div>
 
             <div class="layui-form-item">
@@ -44,6 +48,7 @@
                     <input type="password" id="password" name="password" required="" lay-verify="required|passwordCheck"
                            autocomplete="off"
                            class="layui-input"></div>
+                <div class="layui-form-mid layui-word-aux">6到30字符</div>
             </div>
 
             <div class="layui-form-item">
@@ -52,14 +57,15 @@
                 <div class="layui-input-inline">
                     <input type="text" id="realName" name="realName" required="" lay-verify="required|realNameCheck"
                            autocomplete="off" class="layui-input"></div>
+                <div class="layui-form-mid layui-word-aux">最大45字符</div>
             </div>
             <div class="layui-form-item">
-                <label for="adminFlag" class="layui-form-label">
-                    <span class="x-red">*</span>是否管理员</label>
+                <label for="userType" class="layui-form-label">
+                    <span class="x-red">*</span>用户类型</label>
                 <div class="layui-input-inline">
-                    <select id="adminFlag" name="adminFlag" class="valid">
-                        <option value="0">否</option>
-                        <option value="1">是</option>
+                    <select id="userType" name="userType" class="valid">
+                        <option value="3">普通用户</option>
+                        <option value="2">管理员</option>
                     </select>
                 </div>
             </div>
@@ -95,13 +101,13 @@
                 const password = tData.password;
                 const md5Password = hex_md5(password);
                 const realName = tData.realName;
-                const adminFlag = tData.adminFlag;
+                const userType = tData.userType;
                 const remarks = $("#remarks").val();
                 const jsonParam = JSON.stringify({
                     username: username,
                     password: md5Password,
                     realName: realName,
-                    adminFlag: adminFlag,
+                    userType: userType,
                     remarks: remarks
                 });
                 AjaxRequest.aPost(api.user.save, jsonParam, function (r) {
@@ -160,6 +166,5 @@
             });
         });
 </script>
-
 </body>
 </html>

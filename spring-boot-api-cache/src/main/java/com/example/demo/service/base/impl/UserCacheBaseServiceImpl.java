@@ -54,6 +54,7 @@ public class UserCacheBaseServiceImpl implements UserCacheBaseService {
     public List<UserInfo> listAll() {
         log.info("UserCacheBaseServiceImpl >> listAll");
 
+
         //睡眠-模拟查询时间
         this.sleep(500);
         return new ArrayList<>(MOCK_USER_MAP.values());

@@ -2,16 +2,16 @@
 <!DOCTYPE mapper
         PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         "http://ibatis.apache.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.admin.dao.mapper.ScheduledQuartzUserMapper">
+<mapper namespace="com.job.admin.dao.mapper.ScheduledQuartzUserMapper">
 
-    <resultMap type="com.example.admin.dao.bean.ScheduledQuartUserInfo" id="BaseResultMap">
+    <resultMap type="com.job.admin.dao.bean.ScheduledQuartUserInfo" id="BaseResultMap">
         <result property="id" column="id"/>
         <result property="projectKey" column="project_key"/>
         <result property="username" column="username"/>
         <result property="salt" column="salt"/>
         <result property="password" column="password"/>
         <result property="realName" column="real_name"/>
-        <result property="adminFlag" column="admin_flag"/>
+        <result property="userType" column="user_type"/>
         <result property="userStatus" column="user_status"/>
         <result property="menus" column="menus"/>
         <result property="remarks" column="remarks"/>
@@ -28,12 +28,12 @@
 
     <sql id="User_All_Columns">
         id, project_key, username,salt, password, real_name,
-        admin_flag,user_status,menus,functions,remarks,last_login_timestamp, create_by,create_name, create_time,
+        user_type,user_status,menus,functions,remarks,last_login_timestamp, create_by,create_name, create_time,
         update_by,update_name,
         update_time, del_flag
     </sql>
 
-    <insert id="addUser" parameterType="com.example.admin.dao.bean.ScheduledQuartUserInfo">
+    <insert id="addUser" parameterType="com.job.admin.dao.bean.ScheduledQuartUserInfo">
         <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
             SELECT
             LAST_INSERT_ID()
@@ -45,7 +45,7 @@
         salt,
         password,
         real_name,
-        admin_flag,
+        user_type,
         user_status,
         remarks,
         create_by,
@@ -60,7 +60,7 @@
         #{salt,jdbcType=VARCHAR},
         #{password,jdbcType=VARCHAR},
         #{realName,jdbcType=VARCHAR},
-        #{adminFlag,jdbcType=TINYINT},
+        #{userType,jdbcType=TINYINT},
         #{userStatus,jdbcType=TINYINT},
         #{remarks,jdbcType=VARCHAR},
         #{createBy,jdbcType=VARCHAR},
@@ -70,7 +70,7 @@
         )
     </insert>
 
-    <update id="updateSelectiveById" parameterType="com.example.admin.dao.bean.ScheduledQuartzJobInfo">
+    <update id="updateSelectiveById" parameterType="com.job.admin.dao.bean.ScheduledQuartzJobInfo">
         UPDATE scheduled_quartz_user
         <set>
             <if test="username!=null">
@@ -82,8 +82,8 @@
             <if test="realName!=null">
                 real_name=#{realName,jdbcType=VARCHAR},
             </if>
-            <if test="adminFlag!=null">
-                admin_flag=#{adminFlag,jdbcType=TINYINT},
+            <if test="userType!=null">
+                user_type=#{userType,jdbcType=TINYINT},
             </if>
             <if test="userStatus!=null">
                 user_status=#{userStatus,jdbcType=TINYINT},
@@ -159,7 +159,7 @@
         AND id!=#{excludeId,jdbcType=INTEGER}
     </select>
 
-    <select id="countByCondition" parameterType="com.example.admin.dao.dto.JobUserPageQueryDTO"
+    <select id="countByCondition" parameterType="com.job.admin.dao.dto.JobUserPageQueryDTO"
             resultType="java.lang.Integer">
         SELECT
         COUNT(1)
@@ -169,8 +169,8 @@
         <if test="userStatus !=null and userStatus!=-1 ">
             AND user_status=#{userStatus,jdbcType=INTEGER}
         </if>
-        <if test="adminFlag !=null and adminFlag!=-1 ">
-            AND admin_flag=#{adminFlag,jdbcType=INTEGER}
+        <if test="userType !=null and userType!=-1 ">
+            AND user_type=#{userType,jdbcType=INTEGER}
         </if>
         <if test="usernameLike !=null and usernameLike!='' ">
             AND username LIKE CONCAT('%',#{usernameLike,jdbcType=VARCHAR},'%')
@@ -180,7 +180,7 @@
         </if>
     </select>
 
-    <select id="listPageByCondition" parameterType="com.example.admin.dao.dto.JobUserPageQueryDTO"
+    <select id="listPageByCondition" parameterType="com.job.admin.dao.dto.JobUserPageQueryDTO"
             resultMap="BaseResultMap">
         SELECT
         <include refid="User_All_Columns"/>
@@ -190,8 +190,8 @@
         <if test="userStatus !=null and userStatus!=-1 ">
             AND user_status=#{userStatus,jdbcType=INTEGER}
         </if>
-        <if test="adminFlag !=null and adminFlag!=-1 ">
-            AND admin_flag=#{adminFlag,jdbcType=INTEGER}
+        <if test="userType !=null and userType!=-1 ">
+            AND user_type=#{userType,jdbcType=INTEGER}
         </if>
         <if test="usernameLike !=null and usernameLike!='' ">
             AND username LIKE CONCAT('%',#{usernameLike,jdbcType=VARCHAR},'%')

@@ -38,11 +38,6 @@ public @interface RateLimit {
     String keyField() default "";
 
     /**
-     * 基于IP
-     */
-    boolean ipFlag() default false;
-
-    /**
      * 超过最大访问次数后的，提示内容
      */
     String msg() default "over the max request times please try again";

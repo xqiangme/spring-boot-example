@@ -16,7 +16,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -46,18 +45,20 @@ public class LimitAspect {
     @Around("pointCut()&&@annotation(rateLimit)")
     public Object logAround(ProceedingJoinPoint joinPoint, RateLimit rateLimit) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
-        String methodName = method.getName();
+        String methodName = signature.getMethod().getName();
+
         //限流key
-        String rateLimitKey = rateLimit.key() + "." + methodName;
+        String rateLimitKey = this.getRateLimitKey(joinPoint, rateLimit);
         logger.info("[ RateLimit ] >> start times method:{} , rateLimitKey = {}", methodName, rateLimitKey);
 
         //lua表达式
         String luaScript = this.buildLuaScript();
+
         //执行lua表达式通过计数限流
         Long count = this.executeLua(String.valueOf(luaScript), rateLimitKey, rateLimit);
+
         if (count != null && count.intValue() <= rateLimit.count()) {
-            //未超过限流次数
+            //未超过限流次数-执行业务方法
             return joinPoint.proceed();
         } else {
             //超过限流次数
@@ -67,17 +68,28 @@ public class LimitAspect {
         }
     }
 
+    /**
+     * 获取限流key
+     * 默认取 RateLimit > key
+     * 若设置了 keyField 则从参数中获取该字段的值拼接到key中
+     * 示例：user_phone_login_max_times:13235777777
+     *
+     * @param joinPoint
+     * @param rateLimit
+     */
     private String getRateLimitKey(ProceedingJoinPoint joinPoint, RateLimit rateLimit) {
         String fieldName = rateLimit.keyField();
         if ("".equals(fieldName)) {
             return rateLimit.key();
         }
-        //处理自定义属性
+
+        //处理自定义-参数名-动态属性key
         StringBuilder rateLimitKeyBuilder = new StringBuilder(rateLimit.key());
         for (Object obj : joinPoint.getArgs()) {
             if (null == obj) {
                 continue;
             }
+            //仅从非基本类型参数中获取
             if (obj.getClass().isPrimitive()) {
                 continue;
             }
@@ -92,7 +104,8 @@ public class LimitAspect {
     }
 
     /**
-     * 根据属性名获取属性元素，包括各种安全范围和所有父类
+     * 根据属性名获取属性元素，
+     * 包括各种安全范围和所有父类
      *
      * @param fieldName
      * @param object
@@ -105,10 +118,14 @@ public class LimitAspect {
             for (; clazz != Object.class; clazz = clazz.getSuperclass()) {
                 field = clazz.getDeclaredField(fieldName);
             }
+            if (null == field) {
+                return null;
+            }
+            field.setAccessible(true);
             return field.get(object);
         } catch (Exception e) {
-            // 这里甚么都不能抛出去。
-            // 如果这里的异常打印或者往外抛，则就不会进入
+            //通过反射获取 属性值失败
+            logger.error("[ RateLimit ] >> [getFieldByClazz] fieldName:{} ", fieldName, e);
         }
         return null;
     }

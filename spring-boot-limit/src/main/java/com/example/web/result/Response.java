@@ -43,7 +43,7 @@ public class Response implements Serializable {
     }
 
     public static Response success(Object data) {
-        return new Response(true, data, "", "");
+        return new Response(true, data, EMPTY, EMPTY);
     }
 
     public static Response error(String errorCode, String errorMsg) {

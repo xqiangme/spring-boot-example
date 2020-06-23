@@ -16,8 +16,7 @@ import javax.annotation.Resource;
 /**
  * jedis 配置类
  *
- * @author 码农猿
- * @version JedisConfig.java, v 1.0
+ * @author 程序员小强
  */
 @Configuration
 public class JedisConfig extends CachingConfigurerSupport {

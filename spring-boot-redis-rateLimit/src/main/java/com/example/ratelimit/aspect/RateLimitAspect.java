@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import java.lang.reflect.Parameter;
+
 
 /**
  * 描述:限流切面实现
@@ -45,7 +47,6 @@ public class RateLimitAspect {
     public Object logAround(ProceedingJoinPoint joinPoint, RateLimit rateLimit) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String methodName = signature.getMethod().getName();
-
         //组装限流key
         String rateLimitKey = this.getRateLimitKey(joinPoint, rateLimit);
 
@@ -81,6 +82,7 @@ public class RateLimitAspect {
 
         //处理自定义-参数名-动态属性key
         StringBuilder rateLimitKeyBuilder = new StringBuilder(rateLimit.key());
+        //当前方法的参数
         for (Object obj : joinPoint.getArgs()) {
             if (null == obj) {
                 continue;
@@ -89,6 +91,7 @@ public class RateLimitAspect {
             if (ReflectionUtil.isBaseType(obj.getClass())) {
                 continue;
             }
+            //仅支持-自定义类参数
             //属性值
             Object fieldValue = ReflectionUtil.getFieldByClazz(fieldName, obj);
             if (null != fieldValue) {

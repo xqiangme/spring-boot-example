@@ -23,6 +23,21 @@ public class UserRateLimitServiceImpl implements UserRateLimitService {
     private static final Logger logger = LoggerFactory.getLogger(UserRateLimitServiceImpl.class);
 
 
+    /**
+     * 无参数测试
+     */
+    @Override
+    @RateLimit(key = "limit-no-args-param", time = 300, count = 10)
+    public void noArgs() {
+        logger.info("[ noArgs ] >> noArgs ");
+    }
+
+    /**
+     * 单个-参数限流测试
+     * 非自定义参数类，使用 keyField = "userId",不生效，因为或取不到参数名
+     *
+     * @param userId
+     */
     @Override
     @RateLimit(key = "limit-update-user-one-param", time = 300, count = 10, keyField = "userId", msg = "updateUserOneParam over max times")
     public void updateUserOneParam(Integer userId) {
@@ -54,6 +69,6 @@ public class UserRateLimitServiceImpl implements UserRateLimitService {
     @Override
     @RateLimit(key = "limit-update-user-many-param", time = 300, count = 6, keyField = "userId", msg = "updateUserManyParam over max times")
     public void updateUserManyParam(UserUpdateParam param, Integer userId) {
-        logger.info("[ updateUserManyParam ] >> {}", JSON.toJSONString(param));
+        logger.info("[ updateUserManyParam ] >> {}-- userId:{}", JSON.toJSONString(param), userId);
     }
 }

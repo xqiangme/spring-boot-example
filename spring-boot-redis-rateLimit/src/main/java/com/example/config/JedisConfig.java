@@ -26,8 +26,6 @@ public class JedisConfig extends CachingConfigurerSupport {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(JedisConfig.class);
 
-    public static final int EXPIRE_TIME = 1800;
-
     @Resource
     private RedisConfigProperty redisConfigProperty;
 
@@ -47,7 +45,7 @@ public class JedisConfig extends CachingConfigurerSupport {
     public JedisPool jedisPool(@Qualifier(value = "jedisPoolConfig") final JedisPoolConfig jedisPoolConfig) {
         LOGGER.info("Jedis Pool build start ");
         String host = redisConfigProperty.getHost();
-        Integer timeout = redisConfigProperty.getTimeout();
+        int timeout = redisConfigProperty.getTimeout();
         int port = redisConfigProperty.getPort();
         String password = redisConfigProperty.getPassword();
         int database = redisConfigProperty.getDatabase();

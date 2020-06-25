@@ -32,64 +32,83 @@ public class UserLimiterController {
     private static final AtomicInteger COUNTER3 = new AtomicInteger();
     private static final AtomicInteger COUNTER4 = new AtomicInteger();
     private static final AtomicInteger COUNTER5 = new AtomicInteger();
+    private static final AtomicInteger COUNTER6 = new AtomicInteger();
 
     @Autowired
     private UserRateLimitService userRateLimitService;
 
     /**
-     * 普通限流
-     * <p>
-     * 30 秒中，可以访问10次
+     * 无参数
+     */
+    @RequestMapping("/limitNoArgs")
+    public Response noArgs() {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        dataMap.put("times", COUNTER1.incrementAndGet());
+        userRateLimitService.noArgs();
+        return Response.success(dataMap);
+    }
+
+    /**
+     * 单个参数限流测试
      */
     @RequestMapping("/limitUpdateUserOneParam")
     public Response updateUserOneParam(@RequestParam("userId") Integer userId) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        dataMap.put("times", COUNTER1.incrementAndGet());
+        dataMap.put("times", COUNTER2.incrementAndGet());
         userRateLimitService.updateUserOneParam(userId);
         return Response.success(dataMap);
     }
 
     /**
-     * 普通限流
-     * <p>
-     * 30 秒中，可以访问10次
+     * 多个参数限流测试
      */
     @RequestMapping("/limitUpdateUserTwoParam")
     public Response updateUserTwoParam(@RequestParam("userId") Integer userId, @RequestParam("userName") String userName) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        dataMap.put("times", COUNTER2.incrementAndGet());
+        dataMap.put("times", COUNTER3.incrementAndGet());
         userRateLimitService.updateUserTwoParam(userId, userName);
         return Response.success(dataMap);
     }
 
+    /**
+     * 单个对象参数限流测试
+     *
+     * @param param
+     */
     @RequestMapping("/limitUpdateUserOneObjParam")
     public Response updateUserOneObjParam(UserUpdateParam param) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        dataMap.put("times", COUNTER3.incrementAndGet());
+        dataMap.put("times", COUNTER4.incrementAndGet());
         userRateLimitService.updateUserOneObjParam(param);
         return Response.success(dataMap);
     }
 
-
+    /**
+     * 对象参数限流测试
+     */
     @RequestMapping("/limitUpdateUserTwoObjParam")
     public Response updateUserTwoObjParam(UserUpdateParam param) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        dataMap.put("times", COUNTER4.incrementAndGet());
+        dataMap.put("times", COUNTER5.incrementAndGet());
         UserRateParam param2 = new UserRateParam();
         param2.setUserId(1000001);
         userRateLimitService.updateUserTwoObjParam(param, param2);
         return Response.success(dataMap);
     }
 
+    /**
+     * 限流测试
+     */
     @RequestMapping("/limitUpdateUserManyParam")
     public Response updateUserManyParam(UserUpdateParam param) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        dataMap.put("times", COUNTER5.incrementAndGet());
+        dataMap.put("times", COUNTER6.incrementAndGet());
 
         userRateLimitService.updateUserManyParam(param, 6000001);
         return Response.success(dataMap);

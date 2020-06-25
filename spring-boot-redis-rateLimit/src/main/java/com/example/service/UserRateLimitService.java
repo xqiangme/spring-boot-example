@@ -11,6 +11,12 @@ import com.example.web.param.UserUpdateParam;
 public interface UserRateLimitService {
 
     /**
+     * 无参数测试
+     *
+     */
+    void noArgs();
+
+    /**
      * 单个-参数限流测试
      *
      * @param userId

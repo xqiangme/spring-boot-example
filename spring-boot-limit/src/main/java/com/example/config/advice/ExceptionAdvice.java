@@ -1,6 +1,6 @@
 package com.example.config.advice;
 
-import com.example.exception.RateLimitException;
+import com.example.ratelimit.exception.RateLimitException;
 import com.example.web.result.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -24,7 +24,7 @@ public class ExceptionAdvice {
         result.setSuccess(false);
 
         if (exception instanceof RateLimitException) {
-            log.error("[ 全局统一异常处理 ]>>  限流异常 message = {}", exception.getMessage());
+            log.error("[ 全局统一异常处理 ]>>  rateLimit-exception message = {}", exception.getMessage());
             return Response.error("6001", exception.getMessage());
         }
 

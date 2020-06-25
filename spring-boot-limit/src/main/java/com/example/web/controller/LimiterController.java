@@ -1,6 +1,6 @@
 package com.example.web.controller;
 
-import com.example.annotation.RateLimit;
+import com.example.ratelimit.annotation.RateLimit;
 import com.example.web.param.OrderRateParam;
 import com.example.web.param.UserPhoneCaptchaRateParam;
 import com.example.web.param.UserRateParam;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 描述: 测试页
+ * 描述: 测试限流
  *
  * @author 程序员小强
  */

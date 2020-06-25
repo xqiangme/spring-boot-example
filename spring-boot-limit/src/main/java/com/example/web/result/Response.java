@@ -42,6 +42,9 @@ public class Response implements Serializable {
         this.errorMsg = errorMsg;
     }
 
+    public static Response success() {
+        return new Response(true, EMPTY, EMPTY, EMPTY);
+    }
     public static Response success(Object data) {
         return new Response(true, data, EMPTY, EMPTY);
     }

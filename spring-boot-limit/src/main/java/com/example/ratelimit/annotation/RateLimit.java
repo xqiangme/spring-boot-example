@@ -1,4 +1,4 @@
-package com.example.annotation;
+package com.example.ratelimit.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,12 +28,13 @@ public @interface RateLimit {
 
     /**
      * 限流次数
+     * 失效时间段内最大放行次数
      */
     int count();
 
     /**
-     * 可作为限流key-参数中属性名
-     * 示例：phone、userId等
+     * 可作为限流key-参数类中属性名，动态值
+     * 示例：phone、userId 等
      */
     String keyField() default "";
 

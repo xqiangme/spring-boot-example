@@ -12,5 +12,5 @@ public class UserRateParam implements Serializable {
     private Integer userId;
 
     private String userName;
-    
+
 }

@@ -5,10 +5,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class OrderRateParam implements Serializable {
+public class UserBaseParam implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
-    private String orderId;
+    private Integer userId;
 
 }

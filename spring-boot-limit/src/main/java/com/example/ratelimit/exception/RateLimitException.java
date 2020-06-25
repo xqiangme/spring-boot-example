@@ -1,4 +1,4 @@
-package com.example.exception;
+package com.example.ratelimit.exception;
 
 import java.text.MessageFormat;
 

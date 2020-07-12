@@ -59,7 +59,7 @@ public class WebInterceptor implements HandlerInterceptor {
         //设置session失效时间-单位秒
         session.setMaxInactiveInterval(1800);
         //设置本域cookie
-        CookieUtil.setCookie(response, SSOClientHelper.SSOProperty.TOKEN_NAME, token, 7200);
+        CookieUtil.setCookie(response, SSOClientHelper.SSOProperty.TOKEN_NAME, token, 1800);
         log.debug("[ WebInterceptor ] >> 令牌有效,创建局部会话成功 requestUrl:{}, token:{}", request.getRequestURI(), token);
         return true;
     }

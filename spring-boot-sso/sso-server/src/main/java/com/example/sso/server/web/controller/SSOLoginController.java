@@ -51,7 +51,7 @@ public class SSOLoginController {
         //把令牌放到全局会话中
         session.setAttribute("ssoToken", ssoToken);
         //设置session失效时间-单位秒
-        session.setMaxInactiveInterval(1800);
+        session.setMaxInactiveInterval(3600);
         //将有效的令牌-放到map容器中(存在该容器中的token都是合法的,正式环境建议存库或者redis)
         SSOConstantPool.TOKEN_POOL.add(ssoToken);
 

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>程序员小强-SSODemo</title>
+</head>
+<style>body.center {
+    text-align: center;
+}
+</style>
+<body class="center">
+<div>
+    <h1>SSO用户统一登录</h1>
+</div>
+<div>
+    <form name="loginForm" action="/sso/login" method="POST" accept-charset="UTF-8">
+        <div><input placeholder="用户名" value="admin" name="username" type="text"/></div>
+        <div><input placeholder="密码" value="123456" name="password" type="password"/></div>
+        <div style="color: red"><span th:text="${msg}"></span></div>
+        <div><input name="redirectUrl" type="hidden" th:value="${redirectUrl}"/></div>
+        <input type="submit" value="登录"/>
+        <input type="reset" value="重置"/>
+    </form>
+</div>
+</body>
+</html>

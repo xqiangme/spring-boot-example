@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * 人员信息接口
  *
- * @author 码农猿
+ * @author 程序员小强
  */
 @RestController
 @RequestMapping("/user")
@@ -30,7 +30,7 @@ public class UserInfoController {
      * 获取 db1与 db2的所有人员
      * 仅用与 demo项目测试
      *
-     * @author 码农猿
+     * @author 程序员小强
      */
     @PostMapping("/list-all")
     public Map<String, Object> getAllUser() {

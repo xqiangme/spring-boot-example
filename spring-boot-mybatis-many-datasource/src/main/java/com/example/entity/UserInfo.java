@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * 人员信息实体类
  *
- * @author 码农猿
+ * @author 程序员小强
  * @date 2019-03-25 23:08:13
  */
 public class UserInfo implements Serializable {

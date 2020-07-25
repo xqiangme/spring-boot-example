@@ -10,7 +10,7 @@ import java.util.List;
  * <p>
  * 人员信息mapper接口
  *
- * @author 码农猿
+ * @author 程序员小强
  * @date 2019-03-25 23:08:13
  */
 public interface UserInfo1Mapper {
@@ -21,7 +21,7 @@ public interface UserInfo1Mapper {
      *
      * @param userInfo 人员信息实体
      * @return 新增的行数
-     * @author 码农猿
+     * @author 程序员小强
      * @date 2019-03-25 23:08:13
      */
     int insert(UserInfo userInfo);
@@ -31,7 +31,7 @@ public interface UserInfo1Mapper {
      * 查询所有 人员信息
      *
      * @return 人员信息 列表
-     * @author 码农猿
+     * @author 程序员小强
      * @date 2019-03-25 23:08:13
      */
     List<UserInfo> listAll();
@@ -41,7 +41,7 @@ public interface UserInfo1Mapper {
      *
      * @param userId 业务主键
      * @return 人员信息实体
-     * @author 码农猿
+     * @author 程序员小强
      * @date 2019-03-25 23:08:13
      */
     UserInfo getByUserId(String userId);
@@ -51,7 +51,7 @@ public interface UserInfo1Mapper {
      *
      * @param userInfo 人员信息实体
      * @return 编辑的行数
-     * @author 码农猿
+     * @author 程序员小强
      * @date 2019-03-25 23:08:13
      */
     int updateByUserId(UserInfo userInfo);
@@ -61,7 +61,7 @@ public interface UserInfo1Mapper {
      *
      * @param userInfo 人员信息实体
      * @return 编辑的行数
-     * @author 码农猿
+     * @author 程序员小强
      * @date 2019-03-25 23:08:13
      */
     int updateByUserIdSelective(UserInfo userInfo);

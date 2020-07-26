@@ -1,6 +1,5 @@
 package com.example.service.impl;
 
-import com.example.datasource.aspect.DynamicDataSourceAspect;
 import com.example.datasource.dynamic.DataSourceTypeEnum;
 import com.example.datasource.annotation.TargetDataSource;
 import com.example.entity.UserInfo;

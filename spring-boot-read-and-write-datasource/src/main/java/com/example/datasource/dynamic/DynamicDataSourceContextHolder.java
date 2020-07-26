@@ -1,6 +1,7 @@
 package com.example.datasource.dynamic;
 
 /**
+ * 通过ThreadLocal将数据源设置到每个线程上下文中
  * 用于切换读/写模式数据源
  * 原理:
  * 1.利用ThreadLocal保存当前线程数据源模式

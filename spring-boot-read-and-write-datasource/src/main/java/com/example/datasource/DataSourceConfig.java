@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -21,12 +22,12 @@ import java.util.Map;
  * @date 2020-07-25
  */
 @Configuration
-@MapperScan(basePackages = "com.example.mapper")
 public class DataSourceConfig {
 
     /**
      * 主数据源 (可读可写的主数据源)
      */
+    @Primary
     @Bean(name = "masterDataSource")
     @Qualifier("masterDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.master")

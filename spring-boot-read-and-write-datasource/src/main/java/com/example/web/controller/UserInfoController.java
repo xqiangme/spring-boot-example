@@ -59,8 +59,8 @@ public class UserInfoController {
      *
      * @param userId 业务主键
      */
-    @RequestMapping("/listByUserId")
-    public UserInfo getByUserId(String userId) {
+    @RequestMapping("/getByUserId")
+    public UserInfo getByUserId(@RequestParam("userId") String userId) {
         return userService.getByUserId(userId);
     }
 }

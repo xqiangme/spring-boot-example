@@ -15,6 +15,9 @@ public class ReflectionUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
 
+    private static final String JAVA_PACKAGE_PREFIX = "java.";
+    private static final String JAVAX_PACKAGE_PREFIX = "javax.";
+
     /**
      * 根据属性名获取属性元素，
      * 包括各种安全范围和所有父类
@@ -44,6 +47,28 @@ public class ReflectionUtil {
             logger.error("[ ReflectionUtil ] >> [getFieldByClazz] fieldName:{} ", fieldName, e);
         }
         return null;
+    }
+
+    /**
+     * 判断类-是否为Jdk自带类
+     *
+     * @param clazz
+     * @return
+     */
+    public static boolean isJdkClazz(Class clazz) {
+        if (null == clazz) {
+            return false;
+        }
+
+        //是否为基本类型
+        if (clazz.isPrimitive()) {
+            return true;
+        }
+
+        // 全类名以 java. 或者 javax.前缀
+        boolean javaPackage = (clazz.getName().startsWith(JAVA_PACKAGE_PREFIX) || clazz.getName().startsWith(JAVAX_PACKAGE_PREFIX));
+
+        return javaPackage && (null == clazz.getClassLoader());
     }
 
     /**

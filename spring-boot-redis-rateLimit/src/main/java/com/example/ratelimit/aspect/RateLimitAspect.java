@@ -88,7 +88,7 @@ public class RateLimitAspect {
                 continue;
             }
             //过滤基本类型参数
-            if (ReflectionUtil.isBaseType(obj.getClass())) {
+            if (ReflectionUtil.isJdkClazz(obj.getClass())) {
                 continue;
             }
             //仅支持-自定义类参数

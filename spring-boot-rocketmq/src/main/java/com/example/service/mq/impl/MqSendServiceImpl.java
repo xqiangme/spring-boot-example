@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 /**
  * 消息队列-发送接口
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 @Service
 public class MqSendServiceImpl implements MqSendService {

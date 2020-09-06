@@ -2,6 +2,7 @@ package com.example.config.mq;
 
 import com.aliyun.openservices.ons.api.MessageListener;
 import com.aliyun.openservices.ons.api.PropertyKeyConst;
+import com.aliyun.openservices.ons.api.PropertyValueConst;
 import com.aliyun.openservices.ons.api.bean.ConsumerBean;
 import com.aliyun.openservices.ons.api.bean.ProducerBean;
 import com.aliyun.openservices.ons.api.bean.Subscription;
@@ -16,7 +17,7 @@ import java.util.Properties;
 /**
  * RocketMQ 消息队列-配置
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 @Slf4j
 public class MqBaseClient {
@@ -28,7 +29,7 @@ public class MqBaseClient {
      * 创建生产者
      *
      * @return 生产者bean
-     * @author mengqiang
+     * @author 程序员小强
      */
     protected ProducerBean createProducer() {
         ProducerBean producer = new ProducerBean();
@@ -38,7 +39,7 @@ public class MqBaseClient {
         //超时时间
         properties.setProperty(PropertyKeyConst.ConsumeTimeout, "3");
         producer.setProperties(properties);
-        log.info("build  Producer !!!");
+        log.info("[ RocketMQ ] >> Producer create success");
         return producer;
     }
 
@@ -48,7 +49,7 @@ public class MqBaseClient {
      * @param groupId          分组id
      * @param consumeThreadNum 最大消费线程数
      * @return 消费者bean
-     * @author mengqiang
+     * @author 程序员小强
      */
     protected ConsumerBean createConsumer(String groupId, Integer consumeThreadNum,
                                           Map<Subscription, MessageListener> subscriptionTable) {
@@ -62,7 +63,7 @@ public class MqBaseClient {
         consumerBean.setProperties(properties);
         //订阅关系 > 订阅多个topic如上面设置
         consumerBean.setSubscriptionTable(subscriptionTable);
-        log.info("build consumer !!! groupId={}", groupId);
+        log.info("[ RocketMQ ] >> 集群订阅消费 create success , groupId:{},consumeThreadNum:{}", groupId, consumeThreadNum);
         return consumerBean;
     }
 
@@ -73,9 +74,9 @@ public class MqBaseClient {
      * @param consumeThreadNum  固定消费者线程数为xx个
      * @param subscriptionTable 消费监听Map
      * @return 消费者bean
-     * @author mengqiang
+     * @author 程序员小强
      */
-    protected ConsumerBean createBroadCastConsumer(String groupId, String consumeThreadNum,
+    protected ConsumerBean createBroadCastConsumer(String groupId, Integer consumeThreadNum,
                                                    Map<Subscription, MessageListener> subscriptionTable) {
 
         ConsumerBean consumerBean = new ConsumerBean();
@@ -84,23 +85,23 @@ public class MqBaseClient {
         //分组ID
         properties.setProperty(PropertyKeyConst.GROUP_ID, groupId);
         //将消费者线程数固定为20个 20为默认值
-        properties.setProperty(PropertyKeyConst.ConsumeThreadNums, consumeThreadNum);
+        properties.setProperty(PropertyKeyConst.ConsumeThreadNums, String.valueOf(consumeThreadNum));
+        // 广播订阅方式设置
+        properties.put(PropertyKeyConst.MessageModel, PropertyValueConst.BROADCASTING);
         consumerBean.setProperties(properties);
         //订阅关系 > 订阅多个topic如上面设置
         consumerBean.setSubscriptionTable(subscriptionTable);
-        log.info("build bRoadCast consumer !!! groupId={}", groupId);
+        log.info("[ RocketMQ ] >> 广播订阅消费 create success , groupId:{},consumeThreadNum:{}", groupId, consumeThreadNum);
         return consumerBean;
     }
 
-
     protected Map<Subscription, MessageListener> createSubscriptionTable(String topic, String tag, MessageListener msgListener) {
-        //订阅关系
-        Map<Subscription, MessageListener> subscriptionTable = new HashMap<>();
+        //订阅关系-支持多个
+        Map<Subscription, MessageListener> subscriptionTable = new HashMap<>(2);
         Subscription subscription = new Subscription();
         subscription.setTopic(topic);
         subscription.setExpression(tag);
         subscriptionTable.put(subscription, msgListener);
         return subscriptionTable;
     }
-
 }

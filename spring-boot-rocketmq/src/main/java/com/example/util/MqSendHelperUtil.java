@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 消息发送-辅助工具
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 @Slf4j
 public class MqSendHelperUtil {

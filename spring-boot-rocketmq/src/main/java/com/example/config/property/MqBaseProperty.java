@@ -9,10 +9,10 @@ import java.util.Properties;
 /**
  * RocketMQ 消息队列-账号属性参数
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 @Configuration
-@ConfigurationProperties(prefix = "rocketmq")
+@ConfigurationProperties(prefix = "rocketmq.config")
 public class MqBaseProperty {
 
     private String accessKey;

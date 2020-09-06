@@ -2,7 +2,8 @@ package com.example.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyun.openservices.ons.api.bean.ProducerBean;
-import com.example.config.property.MqConfig;
+import com.example.config.property.MqProperty;
+import com.example.model.OrderInfoModel;
 import com.example.model.UserInfoModel;
 import com.example.util.MqSendHelperUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +19,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author 码农猿
+ * @author 程序员小强
  */
 @Slf4j
 @RestController
 public class TestController {
 
     @Autowired
-    private MqConfig mqConfig;
+    private MqProperty mqConfig;
 
     @Autowired
     @Qualifier("msgProducer")
@@ -70,6 +71,22 @@ public class TestController {
 
         log.info("延时消息发送 > user:{}", JSON.toJSONString(user));
         return MqSendHelperUtil.sendDelayMinutes(msgProducer, mqConfig.getTopic(), mqConfig.getTag(), id, user, 10);
+    }
+
+
+    /**
+     * 订单普通消息
+     */
+    @RequestMapping("/orderNormalMsg")
+    public Object orderNormalMsg() {
+        int id = num.getAndIncrement();
+        OrderInfoModel user = new OrderInfoModel();
+        user.setOrderId(String.valueOf(id));
+        user.setTitle("zhangsan" + id);
+        user.setRemarks("订单消息测试");
+
+        log.info("订单普通消息发送 > user:{}", JSON.toJSONString(user));
+        return MqSendHelperUtil.send(msgProducer, mqConfig.getOrderTopic(), mqConfig.getOrderTag(), id, user);
     }
 
 

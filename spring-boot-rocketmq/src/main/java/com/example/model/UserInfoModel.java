@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * 用户信息
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 @Data
 public class UserInfoModel implements Serializable {

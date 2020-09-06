@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 消息监听-辅助工具类
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 public class MqListenerHelperUtil {
 

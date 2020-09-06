@@ -3,7 +3,7 @@ package com.example.service.mq;
 /**
  * 消息队列-发送接口
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 public interface MqSendService {
 

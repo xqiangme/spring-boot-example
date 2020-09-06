@@ -10,12 +10,12 @@ import org.springframework.context.annotation.Configuration;
  * 分组ID（groupId）
  * 标签（tag）
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "rocketmq")
-public class MqConfig {
+public class MqProperty {
 
     private String topic;
     private String groupId;
@@ -25,6 +25,9 @@ public class MqConfig {
     private String orderTopic;
     private String orderGroupId;
     private String orderTag;
+    /**
+     * 订单消费者线程数，默认1
+     */
+    private Integer orderConsumeThreadNum;
 
-    
 }

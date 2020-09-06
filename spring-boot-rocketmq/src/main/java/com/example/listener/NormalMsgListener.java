@@ -35,9 +35,6 @@ public class NormalMsgListener implements MessageListener {
             //do something..
             return Action.CommitMessage;
         } catch (Exception e) {
-            if (MqListenerHelperUtil.canRetryTimes(message.getReconsumeTimes())) {
-                return Action.ReconsumeLater;
-            }
             //消费失败
             return Action.ReconsumeLater;
         }

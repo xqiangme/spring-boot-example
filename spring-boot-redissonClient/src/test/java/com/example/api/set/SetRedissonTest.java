@@ -1,12 +1,21 @@
 package com.example.api.set;
 
 import com.example.redisson.RedisCache;
+import org.checkerframework.checker.units.qual.K;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.redisson.api.MapOptions;
 import org.redisson.api.RSet;
+import org.redisson.api.RedissonClient;
+import org.redisson.api.map.MapLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author mengqiang
@@ -17,6 +26,7 @@ public class SetRedissonTest {
 
     @Autowired
     private RedisCache redisCache;
+
 
 
     @Test

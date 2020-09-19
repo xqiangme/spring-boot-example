@@ -8,14 +8,14 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 /**
  * 启动类
  *
- * @author 码农猿
- * @date 2020-08-30
+ * @author 程序员小强
+ * @date 2020-09-19
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
 public class Application {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
 
 }

@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.14.RELEASE</version>
+        <version>2.3.0.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -16,8 +16,8 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <es.version>6.7.2</es.version>
-        <es.rest-high.version>6.4.3</es.rest-high.version>
+        <es.version>7.4.0</es.version>
+        <es.rest-high.version>7.4.0</es.rest-high.version>
         <spring.boot.version>1.5.14.RELEASE</spring.boot.version>
         <alibaba.druid.version>1.1.6</alibaba.druid.version>
         <mysql-connector.version>5.1.41</mysql-connector.version>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.39</version>
+            <version>1.2.75</version>
         </dependency>
 
         <!--elasticsearch-->

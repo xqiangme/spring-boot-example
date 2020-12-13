@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dao.mapper.ExportTaskInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.dao.entity.ExportTaskInfo">
+        <id column="ID" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="biz_type" property="bizType" jdbcType="VARCHAR" javaType="String"/>
+        <result column="task_dual" property="taskDual" jdbcType="BIGINT" javaType="Long"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" javaType="String"/>
+        <result column="task_param" property="taskParam" jdbcType="VARCHAR" javaType="String"/>
+        <result column="task_title" property="taskTitle" jdbcType="VARCHAR" javaType="String"/>
+        <result column="file_url" property="fileUrl" jdbcType="VARCHAR" javaType="String"/>
+        <result column="expire_time" property="expireTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="operate_by" property="operateBy" jdbcType="VARCHAR" javaType="String"/>
+        <result column="operate_name" property="operateName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="task_rows" property="taskRows" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="task_status" property="taskStatus" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,biz_type,task_dual,remarks,task_param
+        ,task_title,biz_type,file_url,expire_time,operate_by,operate_name
+        ,task_rows,task_status,create_time,update_time
+    </sql>
+
+    <!--根据任务ID查询数据-->
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM export_task_info
+        WHERE
+        id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--新增任务-->
+    <insert id="insertTask" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO export_task_info
+            (
+               id,
+               biz_type,
+               task_title,
+               task_status,
+               task_param,
+               expire_time,
+               operate_by,
+               operate_name
+            )
+        VALUES
+            (
+              null,
+              #{bizType,jdbcType=VARCHAR},
+              #{taskTitle,jdbcType=VARCHAR},
+              #{taskStatus,jdbcType=TINYINT},
+              #{taskParam,jdbcType=VARCHAR},
+              #{expireTime,jdbcType=TIMESTAMP},
+              #{operateBy,jdbcType=VARCHAR},
+              #{operateName,jdbcType=VARCHAR}
+            )
+    </insert>
+
+    <!--任务成功更新-->
+    <update id="updateSuccess">
+        UPDATE export_task_info
+        SET
+        task_status = #{taskStatus,jdbcType=TINYINT},
+        file_url = #{fileUrl,jdbcType=VARCHAR},
+        task_dual = #{taskDual,jdbcType=BIGINT},
+        task_rows = #{taskRows,jdbcType=INTEGER}
+        WHERE
+        id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--任务失败更新-->
+    <update id="updateFail">
+        UPDATE export_task_info
+        SET
+        task_status = #{taskStatus,jdbcType=TINYINT},
+        remarks = #{remarks,jdbcType=VARCHAR},
+        task_dual = #{taskDual,jdbcType=BIGINT}
+        WHERE
+        id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

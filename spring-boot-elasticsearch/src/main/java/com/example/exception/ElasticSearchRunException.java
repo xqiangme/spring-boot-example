@@ -4,7 +4,7 @@ package com.example.exception;
 /**
  * es 执行异常
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 public class ElasticSearchRunException extends BaseException {
 

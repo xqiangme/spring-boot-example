@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dao.mapper.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="com.example.dao.entity.UserInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="del_flag" property="delFlag" jdbcType="BIT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id,
+      user_id,
+      user_name,
+      user_password,
+      real_name,
+      mobile,
+      remark,
+      create_time,
+      update_time,
+      del_flag
+    </sql>
+
+    <!-- 查询所有记录 -->
+    <select id="listAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+    </select>
+
+    <!-- 根据业务主键查询 -->
+    <select id="getByUserId" resultMap="BaseResultMap"
+            parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_info
+        WHERE
+        user_id = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="countByCondition" parameterType="com.example.dao.query.UserInfoQuery"
+            resultType="java.lang.Integer">
+        SELECT count(1) FROM `user_info` a
+        <where>
+            <if test="mobile != null  and mobile != ''">
+                AND a.mobile LIKE CONCAT(#{mobile},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="listPageByCondition" parameterType="com.example.dao.query.UserInfoQuery" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM `user_info` a
+        <where>
+            <if test="mobile != null  and mobile != ''">
+                AND a.mobile LIKE CONCAT(#{mobile},'%')
+            </if>
+        </where>
+        ORDER BY a.id desc
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+
+
+</mapper>

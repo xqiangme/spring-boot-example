@@ -5,17 +5,17 @@ import java.text.MessageFormat;
 /**
  * 基础异常
  *
- * @author mengqiang
+ * @author 程序员小强
  */
 public class BaseException extends RuntimeException {
 
-    protected String msg;
+    public String msg;
 
-    protected BaseException(String message) {
+    public BaseException(String message) {
         super(message);
     }
 
-    protected BaseException(String msgFormat, Object... args) {
+    public BaseException(String msgFormat, Object... args) {
         super(MessageFormat.format(msgFormat, args));
         this.msg = MessageFormat.format(msgFormat, args);
     }

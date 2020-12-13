@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dao.mapper.StudentInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.dao.entity.StudentInfo">
+        <id column="id" property="id" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="name" property="name" jdbcType="VARCHAR" javaType="String"/>
+        <result column="class_id" property="classId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="student_id" property="studentId" jdbcType="VARCHAR" javaType="String"/>
+        <result column="age" property="age" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="sex" property="sex" jdbcType="TINYINT" javaType="Integer"/>
+        <result column="school_date" property="schoolDate" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="progress_rate" property="progressRate" jdbcType="DECIMAL" javaType="java.math.BigDecimal"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,`name`,class_id,student_id,age
+        ,sex,school_date,create_time,update_time,progress_rate
+    </sql>
+
+
+    <!-- 测试查询全部方法  -->
+    <select id="listAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM student_info
+    </select>
+
+    <select id="countByCondition" parameterType="com.example.dao.query.StudentInfoQuery"
+            resultType="java.lang.Integer">
+        SELECT count(1) FROM `student_info` a
+        <where>
+            <if test="classId != null">
+                AND a.class_id = #{classId}
+            </if>
+            <if test="sex != null">
+                AND a.sex = #{sex}
+            </if>
+            <if test="name != null and name !=''">
+                AND a.name LIKE CONCAT(#{name},'%')
+            </if>
+            <if test="createStartTime != null">
+                AND a.create_time  <![CDATA[ >=  ]]> #{createStartTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createEndTime != null">
+                AND a.create_time  <![CDATA[ <=  ]]> #{createEndTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="listPageByCondition" parameterType="com.example.dao.query.StudentInfoQuery" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM `student_info` a
+        <where>
+            <if test="classId != null">
+                AND a.class_id = #{classId}
+            </if>
+            <if test="sex != null">
+                AND a.sex = #{sex}
+            </if>
+            <if test="name != null and name !=''">
+                AND a.name LIKE CONCAT(#{name},'%')
+            </if>
+            <if test="createStartTime != null">
+                AND a.create_time  <![CDATA[ >=  ]]> #{createStartTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createEndTime != null">
+                AND a.create_time  <![CDATA[ <=  ]]> #{createEndTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        ORDER BY a.id desc
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+
+</mapper>

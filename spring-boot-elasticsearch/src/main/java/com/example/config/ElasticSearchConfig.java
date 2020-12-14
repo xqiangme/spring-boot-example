@@ -6,6 +6,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -46,6 +47,12 @@ public class ElasticSearchConfig {
             requestConfigBuilder.setSocketTimeout(elasticSearchProperty.getSocketTimeout());
             requestConfigBuilder.setConnectionRequestTimeout(elasticSearchProperty.getConnectionRequestTimeout());
             return requestConfigBuilder;
+        }).setFailureListener(new RestClient.FailureListener() {
+            //某节点失败
+            @Override
+            public void onFailure(Node node) {
+                log.error("[ ElasticSearchClient ] >>  node :{}, host:{},  fail ", node.getName(), node.getHost());
+            }
         }).setHttpClientConfigCallback(httpClientBuilder -> {
             httpClientBuilder.disableAuthCaching();
             //设置账密

@@ -6,6 +6,7 @@ import com.example.exception.ElasticSearchRunException;
 import com.example.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
@@ -379,6 +380,13 @@ public class ElasticSearchRestApiClient {
                 resultList.add(JSON.parseObject(hit.getSourceAsString(), clazz));
             }
             return resultList;
+        } catch (ElasticsearchStatusException e) {
+            //索引不存在
+            if (e.status() == RestStatus.NOT_FOUND) {
+                log.error("[ elasticsearch ] >>  searchByQuery exception >>  index:{}, Not found ", index, e);
+                return new ArrayList<>(0);
+            }
+            throw new ElasticSearchRunException("[ elasticsearch ] >> searchByQuery exception {}", e);
         } catch (IOException e) {
             log.error("[ elasticsearch ] >> searchByQuery exception ,index = {},sourceBuilder={} ,stack={}", index, sourceBuilder, e);
             throw new ElasticSearchRunException("[ elasticsearch ] >> searchByQuery exception {}", e);

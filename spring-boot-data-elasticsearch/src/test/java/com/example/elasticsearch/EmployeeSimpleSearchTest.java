@@ -12,12 +12,12 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 /**
- * ElasticSearch 其它查询示例
+ * ElasticSearch 简单查询示例
  *
  * @author 程序员小强
  */
 @SpringBootTest(classes = Application.class)
-public class EmployeeSearchQueryTest {
+public class EmployeeSimpleSearchTest {
 
     @Autowired
     private EmployeeInfoService employeeInfoService;
@@ -79,7 +79,7 @@ public class EmployeeSearchQueryTest {
      */
     @Test
     public void findByNameLikeTest() {
-        String name = "张三";
+        String name = "三";
         int pageNo = 1;
         int pageSize = 5;
         Page<EmployeeInfo> employeePage = employeeInfoService.findByNameLike(name, pageNo, pageSize);

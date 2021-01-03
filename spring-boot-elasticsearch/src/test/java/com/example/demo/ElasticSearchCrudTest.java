@@ -126,14 +126,12 @@ public class ElasticSearchCrudTest {
      */
     @Test
     public void updateByIdSelective() {
-        String userId = "9de70a8227c3420bbe6f22b5135b8123";
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUserId(userId);
-        userInfo.setMobile("15725353777");
-        userInfo.setAge(23);
-        userInfo.setGrades(new BigDecimal("581.09"));
+        String userId = "100008100927";
+        MySkuInfo skuInfo = new MySkuInfo();
+        skuInfo.setAppraiseNum(3500);
+        skuInfo.setGoodsName("小米10 至尊纪念版");
 
-        UpdateResponse updateResponse = elasticSearchIndexClient.updateByIdSelective(INDEX, userId, userInfo);
+        UpdateResponse updateResponse = elasticSearchIndexClient.updateByIdSelective("sku_test3", userId, skuInfo);
         System.out.println(String.format("修改的数据 ID:%s, 版本:%d", updateResponse.getId(), updateResponse.getVersion()));
 
     }

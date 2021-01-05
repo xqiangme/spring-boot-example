@@ -48,7 +48,7 @@ public class ElasticSearchConfig {
             requestConfigBuilder.setConnectionRequestTimeout(elasticSearchProperty.getConnectionRequestTimeout());
             return requestConfigBuilder;
         }).setFailureListener(new RestClient.FailureListener() {
-            //某节点失败
+            //某节点失败，这里可以添加一些异常告警
             @Override
             public void onFailure(Node node) {
                 log.error("[ ElasticSearchClient ] >>  node :{}, host:{},  fail ", node.getName(), node.getHost());

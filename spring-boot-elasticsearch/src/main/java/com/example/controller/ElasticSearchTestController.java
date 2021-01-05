@@ -1,7 +1,3 @@
-/**
- * haifenbb.com
- * Copyright (C) 2019-2020 All Rights Reserved.
- */
 package com.example.controller;
 
 import com.example.client.ElasticSearchRestApiClient;
@@ -18,9 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author mengq
+ * @author 程序员小强
  * @date 2020-12-14 10:21
- * @desc
  */
 @Slf4j
 @RestController
@@ -38,20 +33,20 @@ public class ElasticSearchTestController {
      */
     @RequestMapping("searchPageByIndex")
     public Object searchPageByIndex(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                    @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                    @RequestParam(value = "index", required = false) String index) {
-        pageNo = pageNo == null ? 1 : pageNo;
-        pageSize = pageSize == null ? 10 : pageSize;
-        index = StringUtils.isEmpty(index) ? INDEX : index;
-        List<UserInfo> dataList = elasticSearchRestClient.searchPageByIndex(index, pageNo, pageSize, UserInfo.class);
+				    @RequestParam(value = "pageSize", required = false) Integer pageSize,
+				    @RequestParam(value = "index", required = false) String index) {
+	pageNo = pageNo == null ? 1 : pageNo;
+	pageSize = pageSize == null ? 10 : pageSize;
+	index = StringUtils.isEmpty(index) ? INDEX : index;
+	List<UserInfo> dataList = elasticSearchRestClient.searchPageByIndex(index, pageNo, pageSize, UserInfo.class);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("index", index);
-        result.put("pageNo", pageNo);
-        result.put("pageSize", pageSize);
-        result.put("dataList", dataList);
-        log.info("[ searchPageByIndex ] >> index:{},pageNo:{},pageSize:{}", index, pageNo, pageSize);
-        return result;
+	Map<String, Object> result = new HashMap<>();
+	result.put("index", index);
+	result.put("pageNo", pageNo);
+	result.put("pageSize", pageSize);
+	result.put("dataList", dataList);
+	log.info("[ searchPageByIndex ] >> index:{},pageNo:{},pageSize:{}", index, pageNo, pageSize);
+	return result;
     }
 
 

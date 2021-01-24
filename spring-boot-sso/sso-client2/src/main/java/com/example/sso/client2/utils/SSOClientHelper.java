@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author mengq
+ * @author 程序员小强
  * @date 2020-07-10 22:50
  */
 public class SSOClientHelper {

@@ -16,7 +16,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <es.version>7.4.0</es.version>
+        <es.version>7.11.2</es.version>
         <es.rest-high.version>7.4.0</es.rest-high.version>
         <spring.boot.version>1.5.14.RELEASE</spring.boot.version>
         <alibaba.druid.version>1.1.6</alibaba.druid.version>
